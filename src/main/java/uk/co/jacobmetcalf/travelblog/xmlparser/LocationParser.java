@@ -40,14 +40,12 @@ public class LocationParser implements ElementPullParser<Location> {
         .asStartElement(xmlEventReader.nextEvent(), ElementToken.LOCATION);
 
     String locationName = stringPullParser.pullString(xmlEventReader, ElementToken.LOCATION);
-    ElementToken.asEndElement(xmlEventReader.nextEvent(), ElementToken.LOCATION); // consume end
+    ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.LOCATION); // consume end
 
     ImmutableLocation.Builder curriedLocation = parentLocation.location(locationName);
-    Location result = pullLocationAsAttributes(locationElement, curriedLocation,
+    return pullLocationAsAttributes(locationElement, curriedLocation,
         (a, b) -> { throw new IllegalStateException("Unexpected attribute: " + a
           + ", expecting: " + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));});
-
-    return result;
   }
 
   /**
@@ -56,26 +54,25 @@ public class LocationParser implements ElementPullParser<Location> {
    *                    dealing with a mix of attributes.
    * @return Location A location in the world.
    */
-  public Location pullLocationAsAttributes(final StartElement startElement,
-    final ImmutableLocation.Builder parentLocation,
-    final BiConsumer<AttributeToken, Attribute> handleOther) {
-
-    final ImmutableLocation.Builder locationBuilder = parentLocation;
+  public Location pullLocationAsAttributes(@NonNull final StartElement startElement,
+    final ImmutableLocation.@NonNull Builder parentLocation,
+    final @NonNull BiConsumer<AttributeToken, Attribute> handleOther) {
 
     Streams.stream(startElement.getAttributes())
         .forEach( a -> {
           AttributeToken attributeToken = AttributeToken.fromAttributeName(a);
           switch (attributeToken) {
-            case COUNTRY: locationBuilder.country(a.getValue()); break;
-            case PROVINCE: locationBuilder.province(a.getValue()); break;
-            case LOCATION: locationBuilder.location(a.getValue()); break;
-            case LATITUDE: locationBuilder.latitude(Double.valueOf(a.getValue())); break;
-            case LONGITUDE: locationBuilder.longitude(Double.valueOf(a.getValue())); break;
-            case WIKI: locationBuilder.wiki(a.getValue()); break;
-            default: handleOther.accept(attributeToken, a);
-          };
+            case COUNTRY -> parentLocation.country(a.getValue());
+            case PROVINCE -> parentLocation.province(a.getValue());
+            case LOCATION -> parentLocation.location(a.getValue());
+            case LATITUDE -> parentLocation.latitude(Double.valueOf(a.getValue()));
+            case LONGITUDE -> parentLocation.longitude(Double.valueOf(a.getValue()));
+            case ZOOM -> parentLocation.zoom(Integer.parseInt(a.getValue()));
+            case WIKI -> parentLocation.wiki(a.getValue());
+            default -> handleOther.accept(attributeToken, a);
+          }
         });
 
-    return locationBuilder.build();
+    return parentLocation.build();
   }
 }

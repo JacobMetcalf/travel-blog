@@ -25,11 +25,11 @@ public class StringPullParser {
         }
       } else if (peekedEvent.isEndElement()) {
         // Close paragraph
-        ElementToken.asEndElement(peekedEvent, elementToken);
+        ElementToken.checkEndElement(peekedEvent, elementToken);
         elementOpen = false;
 
       } else {
-        throw new IllegalStateException("Unexpectected event: " + peekedEvent);
+        throw new IllegalStateException("Unexpected event: " + peekedEvent);
       }
     }
     return stringBuilder.toString();

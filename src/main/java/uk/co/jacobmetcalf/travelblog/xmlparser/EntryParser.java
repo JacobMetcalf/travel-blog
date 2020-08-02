@@ -33,17 +33,19 @@ public class EntryParser implements ElementPullParser<Entry> {
       if (peekedEvent.isStartElement()) {
         // A paragraph of text and other elements
         ElementToken.asStartElement(peekedEvent, ElementToken.PARAGRAPH);
-        entryBuilder.addParagraphs(paragraphParser.pullElement(xmlEventReader, parentLocation));
+        entryBuilder.addParagraphs(paragraphParser.pullElement(xmlEventReader,
+            ImmutableLocation.builder().from(location)));
 
       } else if (peekedEvent.isEndElement()) {
         // Close entry
-        ElementToken.asEndElement(xmlEventReader.nextEvent(), ElementToken.ENTRY);
+        ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.ENTRY);
         entryOpen = false;
 
       } else {
         throw new IllegalStateException("Unexpected event: " + peekedEvent);
       }
     }
+    entryBuilder.location(location);
     return entryBuilder.build();
   }
 

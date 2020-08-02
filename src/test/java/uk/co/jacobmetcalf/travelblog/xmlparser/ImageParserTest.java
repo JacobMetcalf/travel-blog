@@ -8,7 +8,7 @@ import uk.co.jacobmetcalf.travelblog.model.Image;
 import uk.co.jacobmetcalf.travelblog.model.Image.Position;
 
 public class ImageParserTest {
-  public ImageParser unit = new ImageParser();
+  public final ImageParser unit = new ImageParser();
 
   @Test
   public void can_parse_a_valid_image() {

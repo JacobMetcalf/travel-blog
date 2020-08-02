@@ -30,25 +30,18 @@ public class ImageParser implements ElementPullParser<Image> {
     Location location = locationParser.pullLocationAsAttributes(imageElement, parentLocation,
         (attributeToken, attribute) -> {
           switch (attributeToken) {
-            case SRC:
-              imageBuilder.src(attribute.getValue());
-              break;
-            case TITLE:
-              imageBuilder.title(attribute.getValue());
-              break;
-            case POSITION:
-              imageBuilder.position(
+            case SRC -> imageBuilder.src(attribute.getValue());
+            case TITLE -> imageBuilder.title(attribute.getValue());
+            case POSITION -> imageBuilder.position(
                   Image.Position.valueOf(attribute.getValue().toUpperCase()));
-              break;
-            default:
-              throw new IllegalStateException("Unexpected attribute: " + attributeToken.name()
+            default -> throw new IllegalStateException("Unexpected attribute: " + attributeToken.name()
                   + " != SRC|POSITION|TITLE|"
                   + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));
           }
         });
 
     imageBuilder.location(location);
-    ElementToken.asEndElement(xmlEventReader.nextEvent(), ElementToken.IMAGE);
+    ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.IMAGE);
     return imageBuilder.build();
 
   }

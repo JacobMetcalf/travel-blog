@@ -11,7 +11,9 @@ import uk.co.jacobmetcalf.travelblog.model.ImmutableText;
 
 public class EntryParserTest {
 
-  public EntryParser unit = new EntryParser();
+  public final EntryParser unit = new EntryParser();
+
+  // TODO Test overriding of parent location and inheritance by paras
 
   @Test
   public void can_parse_a_valid_empty_entry() {

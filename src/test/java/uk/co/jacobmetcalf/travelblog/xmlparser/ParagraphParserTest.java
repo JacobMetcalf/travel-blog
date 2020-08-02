@@ -12,7 +12,7 @@ import uk.co.jacobmetcalf.travelblog.model.Paragraph;
 
 public class ParagraphParserTest {
 
-  public ParagraphParser unit = new ParagraphParser();
+  public final ParagraphParser unit = new ParagraphParser();
 
   @Test
   public void can_parse_paragraph_with_text() {

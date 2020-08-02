@@ -28,14 +28,16 @@ public class WikiParser implements ElementPullParser<WikiRef> {
     Streams.stream(wikiElement.getAttributes())
         .forEach( a -> {
           AttributeToken attributeToken = AttributeToken.fromAttributeName(a);
-          switch (attributeToken) {
-            case REF: wikiBuilder.ref(a.getValue()); break;
-            default: throw new IllegalStateException("Unexpected attribute: "
+          if (attributeToken == AttributeToken.REF) {
+            wikiBuilder.ref(a.getValue());
+          } else {
+            throw new IllegalStateException("Unexpected attribute: "
                 + a.getName() + ", expected REF");
-          }});
+          }
+        });
 
     wikiBuilder.text(stringPullParser.pullString(xmlEventReader, ElementToken.WIKI));
-    ElementToken.asEndElement(xmlEventReader.nextEvent(), ElementToken.WIKI); // consume end
+    ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.WIKI); // consume end
     return wikiBuilder.build();
   }
 }

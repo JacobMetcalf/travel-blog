@@ -9,7 +9,9 @@ import uk.co.jacobmetcalf.travelblog.model.Location;
 
 public class LocationParserTest {
 
-  public LocationParser unit = new LocationParser();
+  public final LocationParser unit = new LocationParser();
+
+  //TODO: Test optionality of zoom
 
   @Test
   public void can_parse_valid_location_element() {
@@ -23,6 +25,6 @@ public class LocationParserTest {
     assertThat(actual.getLocation(), equalTo("Riobamba"));
     assertThat(actual.getLatitude(), closeTo(-1.6733, 0.00001));
     assertThat(actual.getLongitude(), closeTo(-78.6517, 0.00001));
-    assertThat(actual.getWiki().get(), equalTo("Riobamba"));
+    assertThat(actual.getWiki().orElseThrow(), equalTo("Riobamba"));
   }
 }

@@ -27,6 +27,8 @@ public class DiaryParser {
 
   public Stream<Entry> parse(@NonNull final InputStream inputStream) throws XMLStreamException {
 
+    Preconditions.checkNotNull(inputStream, "Input stream cannot be null");
+
     xmlEventReader = FilteredReaderFactory.create(inputStream);
 
     // Skip the start document
@@ -37,7 +39,7 @@ public class DiaryParser {
     ElementToken.asStartElement(event, ElementToken.DIARY);
 
     //TODO: Get the properties of the diary entry and pass down
-    rootLocation = ImmutableLocation.builder().country("Peru");
+    rootLocation = ImmutableLocation.builder().country("Ecuador");
 
     EventIterator iterator = new EventIterator();
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
@@ -68,7 +70,7 @@ public class DiaryParser {
           final XMLEvent peekEvent = xmlEventReader.peek();
           if (peekEvent.isEndElement()) {
             // Close of the diary element sets hasNext() to false
-            ElementToken.asEndElement(peekEvent, ElementToken.DIARY);
+            ElementToken.checkEndElement(peekEvent, ElementToken.DIARY);
           } else if (peekEvent.isStartElement() && peekEvent.asStartElement().getName()
               .getLocalPart().equals(ElementToken.ENTRY.name().toLowerCase())) {
             nextEntry = new EntryParser().pullElement(xmlEventReader, rootLocation);

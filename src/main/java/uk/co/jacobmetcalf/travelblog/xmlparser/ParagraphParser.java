@@ -18,6 +18,7 @@ public class ParagraphParser implements ElementPullParser<Paragraph> {
 
   private final ImageParser imageParser = new ImageParser();
   private final WikiParser wikiParser = new WikiParser();
+  private final LocationParser locationParser = new LocationParser();
 
   @Override
   public Paragraph pullElement(final XMLEventReader xmlEventReader,
@@ -41,7 +42,7 @@ public class ParagraphParser implements ElementPullParser<Paragraph> {
 
       } else if (peekedEvent.isEndElement()) {
         // Close paragraph
-        ElementToken.asEndElement(xmlEventReader.nextEvent(), ElementToken.PARAGRAPH);
+        ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.PARAGRAPH);
         paragraphOpen = false;
 
       } else {
@@ -55,10 +56,12 @@ public class ParagraphParser implements ElementPullParser<Paragraph> {
       final ImmutableLocation.Builder parentLocation,
       final Builder paragraphBuilder) throws XMLStreamException {
 
+    // TODO: Add A element
     paragraphBuilder.addParts(
         switch (ElementToken.fromEventName(peekedEvent)) {
           case IMAGE -> imageParser.pullElement(xmlEventReader, parentLocation);
           case WIKI -> wikiParser.pullElement(xmlEventReader, parentLocation);
+          case LOCATION -> locationParser.pullElement(xmlEventReader, parentLocation);
           default -> throw new IllegalStateException("Unexpected element: "
               + ElementToken.fromEventName(peekedEvent));
         });

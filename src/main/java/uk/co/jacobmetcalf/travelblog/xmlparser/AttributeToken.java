@@ -12,6 +12,7 @@ public enum AttributeToken {
   DATE,
   POSITION,
   WIKI,
+  ZOOM,
   REF,
   TITLE,
   SRC;

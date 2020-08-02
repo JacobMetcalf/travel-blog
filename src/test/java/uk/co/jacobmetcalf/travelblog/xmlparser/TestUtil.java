@@ -11,7 +11,7 @@ import uk.co.jacobmetcalf.travelblog.model.Location;
 
 public class TestUtil {
 
-  public static Location QUITO = ImmutableLocation.builder()
+  public static final Location QUITO = ImmutableLocation.builder()
       .country("Ecuador")
       .province("Pichincha")
       .location("Quito")
@@ -35,8 +35,7 @@ public class TestUtil {
       // Skip start document
       Assertions.assertTrue(xmlEventReader.nextEvent().isStartDocument());
 
-      E result = unit.pullElement(xmlEventReader, parentLocation);
-      return result;
+      return unit.pullElement(xmlEventReader, parentLocation);
 
     } catch (XMLStreamException | IOException ex) {
       throw new RuntimeException("Could not read xml", ex);

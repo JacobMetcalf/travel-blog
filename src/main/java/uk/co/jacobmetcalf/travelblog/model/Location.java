@@ -1,6 +1,7 @@
 package uk.co.jacobmetcalf.travelblog.model;
 
 import java.util.Optional;
+import java.util.OptionalInt;
 import org.immutables.value.Value;
 
 /**
@@ -15,5 +16,6 @@ public abstract class Location implements ParagraphPart {
   public abstract String getLocation();
   public abstract Double getLongitude();
   public abstract Double getLatitude();
+  public abstract OptionalInt getZoom();
   public abstract Optional<String> getWiki();
 }

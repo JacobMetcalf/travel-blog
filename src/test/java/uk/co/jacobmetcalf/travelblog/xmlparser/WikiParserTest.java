@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.WikiRef;
 
 public class WikiParserTest {
-  public WikiParser unit = new WikiParser();
+
+  public final WikiParser unit = new WikiParser();
 
   @Test
   public void can_parse_valid_wiki_element() {

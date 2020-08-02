@@ -6,7 +6,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 public abstract class Image implements ParagraphPart {
 
-  public enum Position {LEFT, CENTRE, RIGHT};
+  public enum Position {LEFT, RIGHT, NONE}
 
   public abstract String getSrc();
   public abstract Position getPosition();
