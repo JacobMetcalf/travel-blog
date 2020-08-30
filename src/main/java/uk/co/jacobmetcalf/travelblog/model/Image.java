@@ -4,7 +4,7 @@ import org.immutables.value.Value;
 
 @ImmutableStyle
 @Value.Immutable
-public abstract class Image implements ParagraphPart {
+public abstract class Image {
 
   public enum Position {LEFT, RIGHT, NONE}
 

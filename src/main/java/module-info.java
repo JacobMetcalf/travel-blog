@@ -3,4 +3,6 @@ module uk.co.jacobmetcalf.travelblog.generator {
   requires com.google.common;
   requires static org.checkerframework.checker.qual;
   requires static org.immutables.value;
+  requires htmlflow;
+  requires htmlApiFaster;
 }

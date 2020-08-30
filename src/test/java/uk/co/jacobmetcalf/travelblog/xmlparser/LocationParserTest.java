@@ -25,6 +25,6 @@ public class LocationParserTest {
     assertThat(actual.getLocation(), equalTo("Riobamba"));
     assertThat(actual.getLatitude(), closeTo(-1.6733, 0.00001));
     assertThat(actual.getLongitude(), closeTo(-78.6517, 0.00001));
-    assertThat(actual.getWiki().orElseThrow(), equalTo("Riobamba"));
+    assertThat(actual.getWiki().orElseThrow(), equalTo("https://en.wikipedia.org/wiki/Riobamba"));
   }
 }

@@ -7,7 +7,7 @@ import org.immutables.value.Value;
  */
 @ImmutableStyle
 @Value.Immutable
-public abstract class WikiRef implements ParagraphPart {
+public abstract class Anchor implements ParagraphPart {
   public abstract String getRef();
   public abstract String getText();
 }

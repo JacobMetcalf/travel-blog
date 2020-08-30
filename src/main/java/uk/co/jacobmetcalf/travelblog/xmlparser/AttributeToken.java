@@ -13,7 +13,8 @@ public enum AttributeToken {
   POSITION,
   WIKI,
   ZOOM,
-  REF,
+  REF, // We need to deprecate this
+  HREF,
   TITLE,
   SRC;
 

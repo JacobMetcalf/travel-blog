@@ -5,29 +5,40 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import uk.co.jacobmetcalf.travelblog.model.WikiRef;
+import uk.co.jacobmetcalf.travelblog.model.Anchor;
 
-public class WikiParserTest {
+public class AnchorParserTest {
 
-  public final WikiParser unit = new WikiParser();
+  public final AnchorParser unit  = new AnchorParser(ElementToken.WIKI, AnchorParser.WIKIPEDIA_BASE);
+  public final AnchorParser unit2 = new AnchorParser();
 
   @Test
   public void can_parse_valid_wiki_element() {
     String inputXml = "<wiki ref=\"New_Cathedral_of_Cuenca\">"
         + "Cathedral of the Immaculate Conception</wiki>";
 
-    WikiRef actual = TestUtil.tryParse(inputXml, unit, TestUtil.quitoAsBuilder());
+    Anchor actual = TestUtil.tryParse(inputXml, unit, TestUtil.quitoAsBuilder());
 
-    assertThat(actual.getRef(),  equalTo("New_Cathedral_of_Cuenca"));
+    assertThat(actual.getRef(),  equalTo("https://en.wikipedia.org/wiki/New_Cathedral_of_Cuenca"));
     assertThat(actual.getText(), equalTo("Cathedral of the Immaculate Conception"));
+  }
+
+  @Test
+  public void can_parse_valid_anchor_element() {
+    String inputXml = "<a href=\"https://www.royensoc.co.uk/identifying-insects\">Royal Entomological Society</a>";
+
+    Anchor actual = TestUtil.tryParse(inputXml, unit2, TestUtil.quitoAsBuilder());
+
+    assertThat(actual.getRef(),  equalTo("https://www.royensoc.co.uk/identifying-insects"));
+    assertThat(actual.getText(), equalTo("Royal Entomological Society"));
   }
 
   @Test
   public void can_parse_valid_wiki_element_with_entity_refs() {
     String inputXml = "<wiki ref=\"P&#225;ramo\">p&#225;ramo</wiki>";
-    WikiRef actual = TestUtil.tryParse(inputXml, unit, TestUtil.quitoAsBuilder());
+    Anchor actual = TestUtil.tryParse(inputXml, unit, TestUtil.quitoAsBuilder());
 
-    assertThat(actual.getRef(),  equalTo("Páramo"));
+    assertThat(actual.getRef(),  equalTo("https://en.wikipedia.org/wiki/Páramo"));
     assertThat(actual.getText(), equalTo("páramo"));
   }
 

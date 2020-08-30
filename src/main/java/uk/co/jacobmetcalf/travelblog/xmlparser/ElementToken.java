@@ -14,6 +14,7 @@ public enum ElementToken {
   IMAGE,
   LOCATION,
   WIKI,
+  A,
   SUMMARY,
   BOOK,
   ROUTE;

@@ -1,5 +1,7 @@
 package uk.co.jacobmetcalf.travelblog.xmlparser;
 
+import static uk.co.jacobmetcalf.travelblog.xmlparser.AnchorParser.WIKIPEDIA_BASE;
+
 import com.google.common.base.Preconditions;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
@@ -17,7 +19,8 @@ import uk.co.jacobmetcalf.travelblog.model.Paragraph;
 public class ParagraphParser implements ElementPullParser<Paragraph> {
 
   private final ImageParser imageParser = new ImageParser();
-  private final WikiParser wikiParser = new WikiParser();
+  private final AnchorParser wikiParser = new AnchorParser(ElementToken.WIKI, WIKIPEDIA_BASE);
+  private final AnchorParser plainAnchorParser = new AnchorParser();
   private final LocationParser locationParser = new LocationParser();
 
   @Override
@@ -56,15 +59,18 @@ public class ParagraphParser implements ElementPullParser<Paragraph> {
       final ImmutableLocation.Builder parentLocation,
       final Builder paragraphBuilder) throws XMLStreamException {
 
-    // TODO: Add A element
-    paragraphBuilder.addParts(
-        switch (ElementToken.fromEventName(peekedEvent)) {
-          case IMAGE -> imageParser.pullElement(xmlEventReader, parentLocation);
-          case WIKI -> wikiParser.pullElement(xmlEventReader, parentLocation);
-          case LOCATION -> locationParser.pullElement(xmlEventReader, parentLocation);
-          default -> throw new IllegalStateException("Unexpected element: "
-              + ElementToken.fromEventName(peekedEvent));
-        });
+      switch (ElementToken.fromEventName(peekedEvent)) {
+        case IMAGE -> paragraphBuilder.addImages(
+            imageParser.pullElement(xmlEventReader, parentLocation));
+        case WIKI -> paragraphBuilder.addParts(
+            wikiParser.pullElement(xmlEventReader, parentLocation));
+        case A -> paragraphBuilder.addParts(
+            plainAnchorParser.pullElement(xmlEventReader, parentLocation));
+        case LOCATION -> paragraphBuilder.addParts(
+            locationParser.pullElement(xmlEventReader, parentLocation));
+        default -> throw new IllegalStateException("Unexpected element: "
+            + ElementToken.fromEventName(peekedEvent));
+      }
   }
 
   private void handleCharacters(final XMLEventReader reader, final Builder paragraphBuilder)

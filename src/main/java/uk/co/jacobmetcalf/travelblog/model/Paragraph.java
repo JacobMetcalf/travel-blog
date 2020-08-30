@@ -7,4 +7,5 @@ import org.immutables.value.Value;
 @Value.Immutable
 public abstract class Paragraph {
   public abstract List<ParagraphPart> getParts();
+  public abstract List<Image> getImages();
 }

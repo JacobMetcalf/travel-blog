@@ -68,7 +68,7 @@ public class LocationParser implements ElementPullParser<Location> {
             case LATITUDE -> parentLocation.latitude(Double.valueOf(a.getValue()));
             case LONGITUDE -> parentLocation.longitude(Double.valueOf(a.getValue()));
             case ZOOM -> parentLocation.zoom(Integer.parseInt(a.getValue()));
-            case WIKI -> parentLocation.wiki(a.getValue());
+            case WIKI -> parentLocation.wiki(AnchorParser.WIKIPEDIA_BASE + a.getValue());
             default -> handleOther.accept(attributeToken, a);
           }
         });

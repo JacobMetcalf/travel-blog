@@ -54,13 +54,16 @@ public class ParagraphParserTest {
         + "title=\"An image\"/>\ntext after</paragraph>";
     Paragraph actual = TestUtil.tryParse(inputXml, unit, TestUtil.quitoAsBuilder());
 
+    MatcherAssert.assertThat(actual.getImages(),
+        Matchers.contains(
+          equalTo(ImmutableImage.builder().title("An image")
+              .src("ecuador001")
+              .position(Position.LEFT)
+              .location(TestUtil.QUITO)
+              .build())));
+
     MatcherAssert.assertThat(actual.getParts(),
         Matchers.contains(equalTo(ImmutableText.builder().text("Text before ").build()),
-            equalTo(ImmutableImage.builder().title("An image")
-                .src("ecuador001")
-                .position(Position.LEFT)
-                .location(TestUtil.QUITO)
-                .build()),
             equalTo(ImmutableText.builder().text("\ntext after").build())));
 
 
