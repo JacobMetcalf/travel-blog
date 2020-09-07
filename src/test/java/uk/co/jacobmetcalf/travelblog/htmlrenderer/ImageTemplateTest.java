@@ -16,7 +16,7 @@ public class ImageTemplateTest {
 
     // Just check dynamic elements
     String actualHtml = builder.toString();
-    assertThat(builder.toString(), containsString("Imabura with snow from hotel"));
-    assertThat(builder.toString(), containsString("pull-md-left"));
+    assertThat(actualHtml, containsString("Imabura with snow from hotel"));
+    assertThat(actualHtml, containsString("pull-md-left"));
   }
 }
