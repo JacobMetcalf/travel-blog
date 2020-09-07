@@ -1,77 +1,54 @@
 package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 
 import com.google.common.base.Joiner;
-import htmlflow.DynamicHtml;
-import htmlflow.HtmlView;
 import java.util.function.Consumer;
 import org.xmlet.htmlapifaster.A;
-import org.xmlet.htmlapifaster.Div;
+import org.xmlet.htmlapifaster.Element;
+import org.xmlet.htmlapifaster.PhrasingContentChoice;
 import uk.co.jacobmetcalf.travelblog.model.Location;
 
+@SuppressWarnings("rawtypes")
 public class LocationTemplate {
   private static final Joiner LOCATION_JOINER = Joiner.on(", ").skipNulls();
 
-  public final static HtmlView<Location> template =
-      DynamicHtml.view(LocationTemplate::locationTemplate).setIndented(false);
-
-  public final static HtmlView<Location> fullyQualifiedTemplate =
-      DynamicHtml.view(LocationTemplate::fullyQualifiedLocationTemplate).setIndented(false);
-
-  // TODO: There ought to be  more elegant way of doing this than having two templates
-
-  private static void locationTemplate(final DynamicHtml<Location> view, final Location location) {
+  /**
+   * Adds a location link to a paragraph or span.
+   *
+   * We cannot use HtmlFlow's partial templates here because they rely on wrapping elements
+   * in "div" elements which are not valid children of a "p" element.
+   *
+   * Assumes that it is already in a dynamic element.
+   */
+  public static <Z extends PhrasingContentChoice<Z, P>, P extends Element> void addLocation(
+      final Z p, final Location location, boolean fullyQualified) {
     // @formatter:off
-    view.div()
-        // Target for links
-        .a()
-          .attrId(location.getLocation())
-        .__()
+    Z result = p
+        .a().attrId(location.getLocation()).__()
         .a()
           .attrTarget("_new")
-          .dynamic(ifNoWikiLinkToMap(location))
-          .dynamic(a -> a.text(location.getLocation()))
-        .__()
-        .dynamic(ifWikiLinkToMap(location));
+          .of(ifNoWikiLinkToMap(location))
+          .of(a -> a.text(fullyQualified ?
+            formatLocation(location) : location.getLocation()))
+        .__();
     // @formatter:on
+    ifWikiAddGlobeIcon(result, location);
   }
 
-  private static void fullyQualifiedLocationTemplate(final DynamicHtml<Location> view,
-      final Location location) {
-    // @formatter:off
-    view.div()
-        // Target for links
-        .a()
-          .attrId(location.getLocation())
-        .__()
-        .a()
-          .attrTarget("_new")
-          .dynamic(ifNoWikiLinkToMap(location))
-          .dynamic(a -> a.text(formatLocation(location)))
-        .__()
-        .dynamic(ifWikiLinkToMap(location));
-    // @formatter:on
-  }
-
-  @SuppressWarnings("rawtypes")
-  private static Consumer<A<Div<HtmlView>>> ifNoWikiLinkToMap(Location location) {
+  private static <Z extends Element> Consumer<A<Z>> ifNoWikiLinkToMap(Location location) {
     return a -> location.getWiki()
         .ifPresentOrElse(a::attrHref,
             () -> a.attrHref("#").attrOnclick(centreOnMap(location)));
   }
 
-  @SuppressWarnings("rawtypes")
-  private static Consumer<Div<HtmlView>> ifWikiLinkToMap(Location location) {
-    return d -> {
-      if (location.getWiki().isPresent()) {
-        d.a()
+  public static <Z extends PhrasingContentChoice<Z, P>, P extends Element>
+      void ifWikiAddGlobeIcon(final Z p, final Location location) {
+    if (location.getWiki().isPresent()) {
+        p.text("&nbsp;").a()
           .attrOnclick(centreOnMap(location))
           .attrHref("#")
-          .img()
-            .attrClass("fa fa-globe")
-          .__()
+          .i().attrClass("fa fa-globe").__()
         .__();
-      }
-    };
+    }
   }
 
   private static String centreOnMap(Location location) {

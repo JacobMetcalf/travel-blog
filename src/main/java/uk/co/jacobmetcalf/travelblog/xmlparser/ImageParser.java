@@ -38,7 +38,7 @@ public class ImageParser implements ElementPullParser<Image> {
                   + " != SRC|POSITION|TITLE|"
                   + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));
           }
-        });
+        }).build();
 
     imageBuilder.location(location);
     ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.IMAGE);

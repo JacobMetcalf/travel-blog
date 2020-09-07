@@ -4,6 +4,7 @@ import htmlflow.DynamicHtml;
 import htmlflow.HtmlView;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import uk.co.jacobmetcalf.travelblog.model.Entry;
 
 public class EntryTemplate {
@@ -12,9 +13,9 @@ public class EntryTemplate {
       DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy");
 
   public final static HtmlView<Entry> template =
-      DynamicHtml.view(EntryTemplate::entryTemplate).setIndented(false);
+      DynamicHtml.view(EntryTemplate::entryTemplate).setIndented(true);
 
-  private static void entryTemplate(final DynamicHtml<Entry> view, final Entry entry) {
+  private static void entryTemplate(final @NonNull DynamicHtml<Entry> view, final Entry entry) {
     // @formatter:off
     view.div()
       .attrClass("clearfix p-t-1")
@@ -28,17 +29,17 @@ public class EntryTemplate {
           .__()
           .span()
             .attrClass("pull-md-right")
-            .of(s -> view.addPartial(LocationTemplate.fullyQualifiedTemplate, entry.getLocation()))
+            .dynamic(s -> LocationTemplate.addLocation(s, entry.getLocation(), true))
           .__()
         .__()
       .__()
-      .of(d -> entry.getParagraphs().forEach(
+      .dynamic(d -> entry.getParagraphs().forEach(
           p -> view.addPartial(ParagraphTemplate.template, p)))
     .__();
     // @formatter:on
   }
 
-  static String formatDate(final LocalDate date) {
+  static String formatDate(final @NonNull LocalDate date) {
     return DATE_FORMAT.format(date);
   }
 }

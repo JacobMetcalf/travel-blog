@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <diary country="Ecuador" title="Ecuador: Another Inca trail and searching for bears in the cloud forest">
-    <!--summary latitude="-1.7" longitude="-78.7" zoom="7" kml="ecuador.kml" thumb="ecuador-thumb.jpg"></summary>
-    <book isin="1742207855" title="Lonely Planet Ecuador"/>
+    <summary latitude="-1.7" longitude="-78.7" zoom="7" kml="ecuador.kml" thumb="ecuador-thumb.jpg"/>
+    <!--book isin="1742207855" title="Lonely Planet Ecuador"/>
     <book isin="0735222916" title="The Square and the Tower"/>
     <book isin="0807092495" title="Fallout: Diasters, Lies and the Legacy of the Nuclear Age"/>
     <book isin="0307743659" title="The Shining"/-->

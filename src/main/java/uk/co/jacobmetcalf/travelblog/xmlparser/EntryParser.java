@@ -59,7 +59,7 @@ public class EntryParser implements ElementPullParser<Entry> {
             throw new IllegalStateException("Unexpected attribute: " + attributeToken.name()
                 + " != DATE|" + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));
           }
-        });
+        }).build();
     entryBuilder.location(location);
     return location;
   }

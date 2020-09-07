@@ -21,4 +21,8 @@ public abstract class Location implements ParagraphPart {
   public int getZoom() {
     return 13;
   }
+
+  public void visit(final ParagraphPart.Visitor visitor) {
+    visitor.visit(this);
+  }
 }

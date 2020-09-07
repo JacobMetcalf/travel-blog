@@ -9,4 +9,8 @@ import org.immutables.value.Value;
 @Value.Immutable
 public abstract class Text implements ParagraphPart {
   public abstract String getText();
+
+  public void visit(final ParagraphPart.Visitor visitor) {
+    visitor.visit(this);
+  }
 }

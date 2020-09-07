@@ -1,23 +1,27 @@
 package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 
-import htmlflow.DynamicHtml;
-import htmlflow.HtmlView;
+import org.xmlet.htmlapifaster.Element;
+import org.xmlet.htmlapifaster.PhrasingContentChoice;
 import uk.co.jacobmetcalf.travelblog.model.Anchor;
-
 public class AnchorTemplate {
 
-  public final static HtmlView<Anchor> template =
-      DynamicHtml.view(AnchorTemplate::anchorTemplate).setIndented(false);
-
-  private static void anchorTemplate(DynamicHtml<Anchor> view, Anchor anchor) {
+  /**
+   * Adds an href to a paragraph or span.
+   *
+   * We cannot use HtmlFlow's partial templates here because they rely on wrapping elements
+   * in "div" elements which are not valid children of a "p" element.
+   *
+   * Assumes that it is already in a dynamic element.
+   */
+  @SuppressWarnings("rawtypes")
+  public static <Z extends PhrasingContentChoice<Z, P>, P extends Element> void add(
+      final Z e, final Anchor anchor) {
     // @formatter:off
-    view.div()
-          .a()
-            .attrTarget("_new")
-            .dynamic(a -> a.attrHref(anchor.getRef()))
-            .dynamic(a -> a.text(anchor.getText()))
-          .__()
-        .__();
+    e.a()
+        .attrTarget("_new")
+        .attrHref(anchor.getRef())
+        .text(anchor.getText())
+      .__();
     // @formatter:on
   }
 }

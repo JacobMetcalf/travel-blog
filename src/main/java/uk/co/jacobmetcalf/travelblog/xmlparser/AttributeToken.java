@@ -16,7 +16,9 @@ public enum AttributeToken {
   REF, // We need to deprecate this
   HREF,
   TITLE,
-  SRC;
+  SRC,
+  THUMB,
+  KML;
 
   public static AttributeToken fromAttributeName(final Attribute attribute) {
 

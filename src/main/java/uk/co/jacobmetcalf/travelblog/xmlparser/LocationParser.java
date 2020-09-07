@@ -45,7 +45,8 @@ public class LocationParser implements ElementPullParser<Location> {
     ImmutableLocation.Builder curriedLocation = parentLocation.location(locationName);
     return pullLocationAsAttributes(locationElement, curriedLocation,
         (a, b) -> { throw new IllegalStateException("Unexpected attribute: " + a
-          + ", expecting: " + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));});
+          + ", expecting: " + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));})
+        .build();
   }
 
   /**
@@ -54,9 +55,10 @@ public class LocationParser implements ElementPullParser<Location> {
    *                    dealing with a mix of attributes.
    * @return Location A location in the world.
    */
-  public Location pullLocationAsAttributes(@NonNull final StartElement startElement,
-    final ImmutableLocation.@NonNull Builder parentLocation,
-    final @NonNull BiConsumer<AttributeToken, Attribute> handleOther) {
+  public ImmutableLocation.Builder pullLocationAsAttributes(
+      @NonNull final StartElement startElement,
+      final ImmutableLocation.@NonNull Builder parentLocation,
+      @NonNull final BiConsumer<AttributeToken, Attribute> handleOther) {
 
     Streams.stream(startElement.getAttributes())
         .forEach( a -> {
@@ -73,6 +75,6 @@ public class LocationParser implements ElementPullParser<Location> {
           }
         });
 
-    return parentLocation.build();
+    return parentLocation;
   }
 }
