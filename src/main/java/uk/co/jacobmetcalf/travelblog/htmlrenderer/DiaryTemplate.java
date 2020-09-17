@@ -1,9 +1,9 @@
 package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 
-import htmlflow.DynamicHtml;
-import htmlflow.HtmlView;
+import org.xmlet.htmlapifaster.ElementVisitor;
 import org.xmlet.htmlapifaster.EnumRelType;
 import org.xmlet.htmlapifaster.EnumTypeContentType;
+import org.xmlet.htmlapifaster.Html;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
 
 public class DiaryTemplate {
@@ -13,12 +13,16 @@ public class DiaryTemplate {
   private static final String ICON_FONT_URL =
       "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css";
 
-  public final static HtmlView<Diary> template =
-      DynamicHtml.view(DiaryTemplate::pageTemplate).setIndented(true);
+  private final EntryTemplate entryTemplate = new EntryTemplate();
+  private final ElementVisitor elementVisitor;
 
-  private static void pageTemplate(final DynamicHtml<Diary> view, final Diary diary) {
+  public DiaryTemplate(final ElementVisitor elementVisitor) {
+    this.elementVisitor = elementVisitor;
+  }
+
+  public void render(final Diary diary) {
     // @formatter:off
-    view.html()
+    new Html<>(elementVisitor)
         .attrLang("en")
         .head()
           .title().text(diary.getTitle()).__()
@@ -36,8 +40,7 @@ public class DiaryTemplate {
         .body()
           .div() //<div id="content" class="container">
             .attrId("content").attrClass("container")
-            .of(b -> diary.getEntries().forEach(
-              e -> view.addPartial(EntryTemplate.template, e)))
+            .of(d -> diary.getEntries().forEach(e -> entryTemplate.add(d, e)))
           .__()
         .__()
       .__();

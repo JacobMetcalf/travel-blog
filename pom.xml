@@ -30,11 +30,6 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.xmlet</groupId>
-            <artifactId>htmlflow</artifactId>
-            <version>${htmlflow.version}</version>
-        </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.github.xmlet/htmlApiFaster -->
         <dependency>

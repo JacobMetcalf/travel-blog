@@ -14,15 +14,16 @@ public class EntryTemplateTest {
 
   @Test
   public void renders_two_textual_paragraphs() {
-    String actualHtml = test_rendering(
-        ImmutableEntry.builder()
+    Entry input = ImmutableEntry.builder()
             .date(TestData.JUL_19)
             .location(TestData.LOCATION_1)
             .addParagraphs(ImmutableParagraph.builder()
                 .addParts(TestData.TEXT_1).build())
             .addParagraphs(ImmutableParagraph.builder()
                 .addParts(TestData.TEXT_3).build())
-            .build());
+            .build();
+
+    String actualHtml = TestHelper.renderInDiv(d -> new EntryTemplate().add(d, input));
 
     // We need to see the country and province on the entry header
     assert_closes_tags(actualHtml);
@@ -34,8 +35,7 @@ public class EntryTemplateTest {
 
   @Test
   public void renders_an_image_in_a_paragraph() {
-    String actualHtml = test_rendering(
-        ImmutableEntry.builder()
+    Entry input = ImmutableEntry.builder()
           .date(TestData.JUL_19)
           .location(TestData.LOCATION_1)
           .addParagraphs(ImmutableParagraph.builder()
@@ -43,7 +43,9 @@ public class EntryTemplateTest {
               .addParts(TestData.TEXT_1).build())
           .addParagraphs(ImmutableParagraph.builder()
                 .addParts(TestData.TEXT_3).build())
-          .build());
+          .build();
+
+    String actualHtml = TestHelper.renderInDiv(d -> new EntryTemplate().add(d, input));
 
     assert_closes_tags(actualHtml);
     assertThat(actualHtml, Matchers.containsString("Start"));
@@ -63,13 +65,5 @@ public class EntryTemplateTest {
    */
   private void assert_closes_tags(final String actualHtml) {
     assertTrue(actualHtml.matches("([^<>]*<[^<>]*>)*\\s*"),() -> "Invalid HTML: " + actualHtml);
-  }
-
-  /**
-   *  This test stems from a problem I encountered when I originally had two dynamic
-   * blocks in the entry - it was not closing out tests properly
-   */
-  private String test_rendering(Entry entry) {
-     return EntryTemplate.template.render(entry);
   }
 }

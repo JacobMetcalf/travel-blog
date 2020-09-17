@@ -10,12 +10,8 @@ public class ImageTemplateTest {
 
   @Test
   public void can_render_image() {
-    ImageTemplate unit = new ImageTemplate();
-    StringBuilder builder = new StringBuilder();
-    unit.add(builder, IMAGE_1);
+    String actualHtml = TestHelper.renderInDiv(d -> new ImageTemplate().add(d, IMAGE_1));
 
-    // Just check dynamic elements
-    String actualHtml = builder.toString();
     assertThat(actualHtml, containsString("Imabura with snow from hotel"));
     assertThat(actualHtml, containsString("pull-md-left"));
   }

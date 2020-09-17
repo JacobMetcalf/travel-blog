@@ -1,82 +1,46 @@
 package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 
-import htmlflow.DynamicHtml;
-import htmlflow.HtmlView;
 import java.util.function.Consumer;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.xmlet.htmlapifaster.Div;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.P;
-import uk.co.jacobmetcalf.travelblog.model.Anchor;
-import uk.co.jacobmetcalf.travelblog.model.Location;
 import uk.co.jacobmetcalf.travelblog.model.Paragraph;
-import uk.co.jacobmetcalf.travelblog.model.ParagraphPart;
-import uk.co.jacobmetcalf.travelblog.model.Text;
 
-/**
- * Template for rendering a paragraph.
- */
-@SuppressWarnings("rawtypes")
 public class ParagraphTemplate {
 
-  public final static HtmlView<Paragraph> template =
-      DynamicHtml.view(ParagraphTemplate::paragraphTemplate).setIndented(false);
+  private final ImageTemplate imageTemplate = new ImageTemplate();
 
-  private static void paragraphTemplate(final DynamicHtml<Paragraph> view, final Paragraph paragraph) {
-    // @formatter:off
-    view.div()
-          .dynamic(d ->
-             d.of(addImages(paragraph))
-                // Now the remaining text elements
-               .p()
-                 .of(p -> {
-                   PartTemplateVisitor<Div<HtmlView>> visitor = new PartTemplateVisitor<>(p);
-                   paragraph.getParts().forEach(i -> i.visit(visitor));
-                 })
-               .__())
-        .__();
-    // @formatter:on
-  }
+  /**
+   * Adds a paragraph to a div.
+   * @param parent The div
+   * @param paragraph The contents of the paragraph.
+   * @param <Z> Parent element of the div.
+   */
+  public <Z extends Element<Z,?>> void add(final Div<Z> parent, final Paragraph paragraph) {
 
-  private static Consumer<Div<HtmlView>> addImages(final Paragraph paragraph) {
-    return div -> {
-        boolean someImages = !paragraph.getImages().isEmpty();
-        boolean justImages = paragraph.getParts().isEmpty();
-        if (someImages) {
-          div.div()
-              .of(d3 -> {
-                if (justImages) {
-                  d3.attrClass("clearfix");
-                }
-              })
-              .of(d3 -> paragraph.getImages().forEach(
-                  i -> div.getParent().addPartial(ImageTemplate.template, i)))
-              .__();
-        }
+    Consumer<P<Div<Z>>> consumer = p -> {
+        ParagraphPartVisitor<Div<Z>> visitor = new ParagraphPartVisitor<>(p);
+        paragraph.getParts().forEach(i -> i.visit(visitor));
       };
+
+      parent.of(addImages(paragraph))
+        // Now the remaining text elements
+        .p().of(consumer).__();
     }
 
-  static class PartTemplateVisitor<Z extends Element> implements ParagraphPart.Visitor {
-
-    private final P<Z> paragraph;
-
-    PartTemplateVisitor(final @NonNull P<Z> paragraph) {
-      this.paragraph = paragraph;
-    }
-
-    @Override
-    public void visit(final @NonNull Anchor anchor) {
-      AnchorTemplate.add(paragraph, anchor);
-    }
-
-    @Override
-    public void visit(final @NonNull Location location) {
-      LocationTemplate.addLocation(paragraph, location, false);
-    }
-
-    @Override
-    public void visit(final @NonNull Text text) {
-      paragraph.text(text.getText());
-    }
+  private <Z extends Element<Z,?>>  Consumer<Div<Z>> addImages(final Paragraph paragraph) {
+    return div -> {
+      boolean someImages = !paragraph.getImages().isEmpty();
+      boolean justImages = paragraph.getParts().isEmpty();
+      if (someImages) {
+        Div<Div<Z>> wrappingDiv = div.div();
+        if (justImages) {
+          wrappingDiv.attrClass("clearfix");
+        }
+        paragraph.getImages().forEach(
+            i -> imageTemplate.add(wrappingDiv, i));
+        wrappingDiv.__();
+      }
+    };
   }
 }

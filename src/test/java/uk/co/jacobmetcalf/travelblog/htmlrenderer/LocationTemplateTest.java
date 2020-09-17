@@ -3,8 +3,6 @@ package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
-import htmlflow.DynamicHtml;
-import htmlflow.HtmlView;
 import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
 import uk.co.jacobmetcalf.travelblog.model.Location;
@@ -13,10 +11,8 @@ public class LocationTemplateTest {
   @Test
   public void can_render_location_without_wiki() {
     // Just check dynamic elements
-    HtmlView<Location> template = DynamicHtml.view((view, location) ->
-        view.div().p().of(p -> LocationTemplate.addLocation(p, location, false)));
-
-    String actualHtml = template.render(TestData.LOCATION_1);
+    String actualHtml = TestHelper.renderInDiv(
+        d -> new LocationTemplate().add(d, TestData.LOCATION_1, false));
 
     // Has link target for Quito
     assertThat(actualHtml, containsString("<a id=\"Quito\">"));
@@ -36,10 +32,8 @@ public class LocationTemplateTest {
         .longitude(-78.5084)
         .build();
 
-    HtmlView<Location> template = DynamicHtml.view((view, l) ->
-        view.div().p().of(p -> LocationTemplate.addLocation(p, l, false)));
-
-    String actualHtml = template.render(location);
+    String actualHtml = TestHelper.renderInDiv(
+        d -> new LocationTemplate().add(d, location, false));
 
     // Has link target for Quito
     assertThat(actualHtml, containsString("<a id=\"Quito\">"));
