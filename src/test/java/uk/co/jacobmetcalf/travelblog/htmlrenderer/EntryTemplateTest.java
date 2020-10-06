@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.xmlet.htmlapifaster.Body;
 import uk.co.jacobmetcalf.travelblog.model.Entry;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableEntry;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph;
@@ -17,7 +16,7 @@ public class EntryTemplateTest {
   @Test
   public void renders_two_textual_paragraphs() {
 
-    String actualHtml = TestHelper.<Body>renderInDiv(d -> new EntryTemplate().add(d, TestData.ENTRY_1));
+    String actualHtml = TestHelper.renderInDiv(d -> new EntryTemplate().add(d, TestData.ENTRY_1));
 
     // We need to see the country and province on the entry header
     assert_closes_tags(actualHtml);
@@ -39,7 +38,7 @@ public class EntryTemplateTest {
                 .addParts(TestData.TEXT_3).build())
           .build();
 
-    String actualHtml = TestHelper.<Body>renderInDiv(d -> new EntryTemplate().add(d, input));
+    String actualHtml = TestHelper.renderInDiv(d -> new EntryTemplate().add(d, input));
 
     assert_closes_tags(actualHtml);
     assertThat(actualHtml, Matchers.containsString("Start"));

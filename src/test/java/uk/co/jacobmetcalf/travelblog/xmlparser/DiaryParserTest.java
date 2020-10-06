@@ -27,7 +27,7 @@ public class DiaryParserTest {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     SimpleElementWriter writer = new SimpleElementWriter(new PrintStream(out));
 
-    new DiaryTemplate(diary, "AIzaSyBDPzE8MWK8weshOc1hgGzx5MEVxOd51uA", "jacobmetcalf-21", writer).render();
+    new DiaryTemplate(diary, "xxx", "jacobmetcalf-21", writer).render();
     String actualHtml = out.toString();
     assertThat(actualHtml, Matchers.containsString("Quito"));
   }
