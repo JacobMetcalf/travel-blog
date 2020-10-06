@@ -13,7 +13,9 @@ public class MapTemplateTest {
 
   @Test
   public void can_render_route() {
-    String actualHtml = TestHelper.renderInDiv(d -> unit.addRoute(d, TestData.ROUTE_1));
+    String actualHtml = TestHelper.renderInDiv(d -> {
+      unit.addRoute(d, TestData.ROUTE_1);
+    });
 
     // Check path plotting
     assertThat(actualHtml, containsString("path:[{lat:10.0,lng:-40.0},{lat:12.0,lng:-42.0}]"));
@@ -21,7 +23,9 @@ public class MapTemplateTest {
 
   @Test
   public void can_render_location() {
-    String actualHtml = TestHelper.renderInScript(d -> MapTemplate.addLocation(d, TestData.QUITO));
+    String actualHtml = TestHelper.renderInScript(d -> {
+      MapTemplate.addLocation(d, TestData.QUITO);
+    });
 
     // Check location plotting
     assertThat(actualHtml, containsString("locations[\"Quito\"] = {lat:-0.2181,lng:-78.5084}"));
@@ -29,7 +33,9 @@ public class MapTemplateTest {
 
   @Test
   public void ignores_no_coord_location() {
-    String actualHtml = TestHelper.renderInScript(d -> MapTemplate.addLocation(d, TestData.ECUADOR));
+    String actualHtml = TestHelper.renderInScript(d -> {
+      MapTemplate.addLocation(d, TestData.ECUADOR);
+    });
 
     // Check does not cause null pointer exception
     assertThat(actualHtml, not(containsString("locations")));
@@ -37,7 +43,9 @@ public class MapTemplateTest {
 
   @Test
   public void renders_footer_script() {
-    String actualHtml = TestHelper.renderInDiv(unit::addFooterScript);
+    String actualHtml = TestHelper.renderInDiv(d -> {
+      unit.addFooterScript(d);
+    });
 
     // Check does not cause null pointer exception
     assertThat(actualHtml, containsString("my-api-key"));

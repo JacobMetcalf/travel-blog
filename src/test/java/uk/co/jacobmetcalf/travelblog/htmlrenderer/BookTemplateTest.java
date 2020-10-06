@@ -12,7 +12,9 @@ public class BookTemplateTest {
   @Test
   public void can_render_book() {
     final BookTemplate unit = new BookTemplate(ImmutableList.of(BOOK_1), "test-tag");
-    String actualHtml = TestHelper.renderInDiv(unit::add);
+    String actualHtml = TestHelper.renderInDiv(d -> {
+      unit.add(d);
+    });
 
     assertThat(actualHtml, containsString("Test book"));
     assertThat(actualHtml, containsString("/123ABC?tag=test-tag"));

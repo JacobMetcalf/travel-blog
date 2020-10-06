@@ -11,7 +11,9 @@ public class AnchorTemplateTest {
   @Test
   public void renders_wiki_link() {
     String actualHtml = TestHelper.renderInP(
-        (d -> new AnchorTemplate().add(d, TestData.HREF_1)));
+        (d -> {
+          new AnchorTemplate().add(d, TestData.HREF_1);
+        }));
 
     assertThat(actualHtml, containsString("href=\"https://www.royensoc.co.uk/identifying-insects\""));
     assertThat(actualHtml, containsString(">Royal Entomological Society<"));

@@ -16,7 +16,9 @@ public class EntryTemplateTest {
   @Test
   public void renders_two_textual_paragraphs() {
 
-    String actualHtml = TestHelper.renderInDiv(d -> new EntryTemplate().add(d, TestData.ENTRY_1));
+    String actualHtml = TestHelper.renderInDiv(d -> {
+      new EntryTemplate().add(d, TestData.ENTRY_1);
+    });
 
     // We need to see the country and province on the entry header
     assert_closes_tags(actualHtml);
@@ -38,7 +40,9 @@ public class EntryTemplateTest {
                 .addParts(TestData.TEXT_3).build())
           .build();
 
-    String actualHtml = TestHelper.renderInDiv(d -> new EntryTemplate().add(d, input));
+    String actualHtml = TestHelper.renderInDiv(d -> {
+      new EntryTemplate().add(d, input);
+    });
 
     assert_closes_tags(actualHtml);
     assertThat(actualHtml, Matchers.containsString("Start"));

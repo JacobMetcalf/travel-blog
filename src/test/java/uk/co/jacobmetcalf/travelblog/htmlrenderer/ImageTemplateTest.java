@@ -10,7 +10,9 @@ public class ImageTemplateTest {
 
   @Test
   public void can_render_image() {
-    String actualHtml = TestHelper.renderInDiv(d -> new ImageTemplate().add(d, IMAGE_1));
+    String actualHtml = TestHelper.renderInDiv(d -> {
+      new ImageTemplate().add(d, IMAGE_1);
+    });
 
     assertThat(actualHtml, containsString("Imabura with snow from hotel"));
     assertThat(actualHtml, containsString("float-md-left"));

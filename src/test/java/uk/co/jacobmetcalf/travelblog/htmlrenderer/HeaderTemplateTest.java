@@ -15,7 +15,9 @@ public class HeaderTemplateTest {
   public void adds_header_without_kml() {
 
     // Just check dynamic elements.
-    String actualHtml = TestHelper.renderInDiv(d -> new NavbarTemplate(TestData.DIARY_NO_ENTRIES).add(d));
+    String actualHtml = TestHelper.renderInDiv(d -> {
+      new NavbarTemplate(TestData.DIARY_NO_ENTRIES).add(d);
+    });
     MatcherAssert.assertThat(actualHtml, Matchers.containsString("Test title"));
   }
 
@@ -25,7 +27,9 @@ public class HeaderTemplateTest {
         .kml("test.kml").build();
 
     // Just check dynamic elements.
-    String actualHtml = TestHelper.renderInDiv(d -> new NavbarTemplate(diary).add(d));
+    String actualHtml = TestHelper.renderInDiv(d -> {
+      new NavbarTemplate(diary).add(d);
+    });
     MatcherAssert.assertThat(actualHtml, Matchers.containsString("test.kml"));
   }
 }
