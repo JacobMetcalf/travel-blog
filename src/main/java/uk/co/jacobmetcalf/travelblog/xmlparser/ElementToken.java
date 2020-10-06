@@ -17,7 +17,8 @@ public enum ElementToken {
   A,
   SUMMARY,
   BOOK,
-  ROUTE;
+  ROUTE,
+  POINT;
 
   /**
    * @throws IllegalStateException if not a start or end element
@@ -31,20 +32,20 @@ public enum ElementToken {
       default -> throw new IllegalStateException("Unexpected event: " + event);
     };
 
-    Preconditions.checkArgument(name.toLowerCase().equals(name),
+    Preconditions.checkState(name.toLowerCase().equals(name),
         "Element names should be lower case: " + name);
 
     return ElementToken.valueOf(name.toUpperCase());
   }
 
   public static StartElement asStartElement(final XMLEvent event, final ElementToken element) {
-    Preconditions.checkArgument(event.isStartElement() && fromEventName(event) == element,
+    Preconditions.checkState(event.isStartElement() && fromEventName(event) == element,
         "Expected start of element: " + element.name().toLowerCase());
     return event.asStartElement();
   }
 
   public static void checkEndElement(final XMLEvent event, final ElementToken element) {
-    Preconditions.checkArgument(event.isEndElement() && fromEventName(event) == element,
+    Preconditions.checkState(event.isEndElement() && fromEventName(event) == element,
         "Expected end of element: " + element.name().toLowerCase());
   }
 }

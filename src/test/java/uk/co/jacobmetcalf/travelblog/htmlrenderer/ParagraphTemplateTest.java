@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.startsWith;
 import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph;
 import uk.co.jacobmetcalf.travelblog.model.Paragraph;
+import uk.co.jacobmetcalf.travelblog.model.TestData;
 import uk.co.jacobmetcalf.travelblog.xmlparser.AnchorParser;
 
 public class ParagraphTemplateTest {
@@ -37,7 +38,7 @@ public class ParagraphTemplateTest {
   @Test
   public void renders_location_in_text() {
     final Paragraph input = ImmutableParagraph.builder()
-        .addParts(TestData.TEXT_1, TestData.LOCATION_1, TestData.TEXT_3)
+        .addParts(TestData.TEXT_1, TestData.QUITO, TestData.TEXT_3)
         .build();
 
     String actualHtml = TestHelper.renderInDiv(d -> new ParagraphTemplate().add(d, input));
@@ -80,7 +81,7 @@ public class ParagraphTemplateTest {
   public void renders_multiple_parts() {
 
     final Paragraph input = ImmutableParagraph.builder()
-        .addParts(TestData.TEXT_1, TestData.LOCATION_1, TestData.TEXT_2,
+        .addParts(TestData.TEXT_1, TestData.QUITO, TestData.TEXT_2,
             TestData.WIKI_LINK, TestData.TEXT_3)
         .addImages(TestData.IMAGE_1)
         .build();

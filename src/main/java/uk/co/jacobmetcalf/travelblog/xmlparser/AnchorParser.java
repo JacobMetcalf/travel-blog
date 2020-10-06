@@ -6,10 +6,9 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import uk.co.jacobmetcalf.travelblog.model.Anchor;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableAnchor;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation.Builder;
+import uk.co.jacobmetcalf.travelblog.model.Location;
 
 /**
  * Pulls a &lt;wiki&gt; or &lt;a&gt; element and the collection children from the event reader.
@@ -27,13 +26,13 @@ public class AnchorParser implements ElementPullParser<Anchor> {
     this.base = "";
   }
 
-  public AnchorParser(@NonNull ElementToken elementToken, @NonNull String base) {
+  public AnchorParser(final ElementToken elementToken, final String base) {
     this.elementToken = elementToken;
     this.base = base;
   }
 
   @Override
-  public Anchor pullElement(XMLEventReader xmlEventReader, Builder parentLocation)
+  public Anchor pullElement(final XMLEventReader xmlEventReader, final Location parentLocation)
       throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());
@@ -52,14 +51,14 @@ public class AnchorParser implements ElementPullParser<Anchor> {
   /**
    * Note: ref attribute can be absolute or relative to a specified base.
    */
-  private void parseAttribute(final ImmutableAnchor.Builder anchorBuilder, final Attribute attribute ) {
+  private void parseAttribute(final ImmutableAnchor.Builder anchorBuilder, final Attribute attribute) {
     AttributeToken attributeToken = AttributeToken.fromAttributeName(attribute);
     if (attributeToken == AttributeToken.REF || attributeToken == AttributeToken.HREF) {
       anchorBuilder.ref(base + attribute.getValue());
 
     } else {
       throw new IllegalStateException("Unexpected attribute: "
-          + attribute.getName() + ", expected REF | HREF");
+          + attribute.getName() + ", expected REF|HREF");
     }
   }
 }

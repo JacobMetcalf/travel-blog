@@ -6,13 +6,14 @@ import static org.hamcrest.Matchers.containsString;
 import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
 import uk.co.jacobmetcalf.travelblog.model.Location;
+import uk.co.jacobmetcalf.travelblog.model.TestData;
 
 public class LocationTemplateTest {
   @Test
   public void can_render_location_without_wiki() {
     // Just check dynamic elements
     String actualHtml = TestHelper.renderInDiv(
-        d -> new LocationTemplate().add(d, TestData.LOCATION_1, false));
+        d -> new LocationTemplate().add(d, TestData.QUITO, false));
 
     // Has link target for Quito
     assertThat(actualHtml, containsString("<a id=\"Quito\">"));

@@ -18,24 +18,24 @@ public class EntryTemplate {
   private final LocationTemplate locationTemplate = new LocationTemplate();
   private final ParagraphTemplate paragraphTemplate = new ParagraphTemplate();
 
-  public <Z extends Element<Z,?>> void add(final Div<Z> parent, final Entry entry) {
+  public <T extends Element<T,?>> Div<T> add(final Div<T> parent, final Entry entry) {
     // @formatter:off
-    parent.div()
-        .attrClass("clearfix p-t-1")
+    return parent
+      .div()
+        .attrClass("clearfix")
         .div()
-          .attrClass("card card-block")
+          .attrClass("card card-body my-3")
           .h6()
             .attrClass("card-subtitle")
-            .dynamic(h -> h.text(formatDate(entry.getDate())))
-            .br().attrClass("hidden-sm-up").__()
+            .of(h -> h.text(formatDate(entry.getDate())))
             .span()
-              .attrClass("pull-md-right")
+              .attrClass("float-md-right")
               .of(addLocation(entry.getLocation()))
             .__()
+          .__()
         .__()
-      .__()
-      .of(d -> entry.getParagraphs().forEach(p -> paragraphTemplate.add(d, p)))
-    .__();
+        .of(d -> entry.getParagraphs().forEach(p -> paragraphTemplate.add(d, p)))
+      .__();
     // @formatter:on
   }
 

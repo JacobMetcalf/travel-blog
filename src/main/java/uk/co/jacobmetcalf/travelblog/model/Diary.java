@@ -1,5 +1,7 @@
 package uk.co.jacobmetcalf.travelblog.model;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import org.immutables.value.Value;
 
@@ -11,8 +13,10 @@ import org.immutables.value.Value;
 @Value.Immutable
 public abstract class Diary {
   public abstract String getTitle();
+  public abstract String getFilename();
   public abstract String getThumb();
-  public abstract String getKml();
-  public abstract ImmutableLocation.Builder getLocation();
-  public abstract Stream<Entry> getEntries();
+  public abstract Optional<String> getKml();
+  public abstract Location getLocation();
+  public abstract List<Book> getBooks();
+  public abstract Stream<EntryOrRoute> getEntriesAndRoutes();
 }

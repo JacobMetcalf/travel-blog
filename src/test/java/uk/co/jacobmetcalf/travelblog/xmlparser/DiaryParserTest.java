@@ -22,12 +22,12 @@ public class DiaryParserTest {
 //    long numEntries = parser.parse(inputStream).count();
 //    assertThat(numEntries, equalTo(17L));
 
-    Diary diary = parser.parse(inputStream);
+    Diary diary = parser.parse("ecuador/diary.xml", inputStream);
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     SimpleElementWriter writer = new SimpleElementWriter(new PrintStream(out));
 
-    new DiaryTemplate(writer).render(diary);
+    new DiaryTemplate(diary, "AIzaSyBDPzE8MWK8weshOc1hgGzx5MEVxOd51uA", "jacobmetcalf-21", writer).render();
     String actualHtml = out.toString();
     assertThat(actualHtml, Matchers.containsString("Quito"));
   }

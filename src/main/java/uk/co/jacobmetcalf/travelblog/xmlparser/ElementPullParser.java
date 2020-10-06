@@ -2,7 +2,7 @@ package uk.co.jacobmetcalf.travelblog.xmlparser;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
+import uk.co.jacobmetcalf.travelblog.model.Location;
 
 /**
  * Generic interface which for now makes testing a bit easier
@@ -13,10 +13,10 @@ public interface ElementPullParser<E> {
   /**
    * Pulls an element of type E from the event reader.
    * @param xmlEventReader The reader
-   * @param parentLocation A (possibly partially) populated location builder from the parent element.
+   * @param parentLocation Location of the parent element.
    * @return An element of type E
    * @throws XMLStreamException If there were issues process the XML.
    */
   E pullElement(XMLEventReader xmlEventReader,
-      ImmutableLocation.Builder parentLocation) throws XMLStreamException;
+      Location parentLocation) throws XMLStreamException;
 }

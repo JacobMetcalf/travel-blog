@@ -7,18 +7,24 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import uk.co.jacobmetcalf.travelblog.model.Entry;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableEntry;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
+import uk.co.jacobmetcalf.travelblog.model.ImmutableEntryOrRoute;
 import uk.co.jacobmetcalf.travelblog.model.Location;
 
-public class EntryParser implements ElementPullParser<Entry> {
+/**
+ * Pulls an entry in a diary. Returns EntryOrRoute which allows the bulk of the diary
+ * to be streamed over.
+ */
+public class EntryParser implements ElementPullParser<EntryOrRoute> {
 
   private final LocationParser locationParser = new LocationParser();
   private final ParagraphParser paragraphParser = new ParagraphParser();
 
-  public Entry pullElement(final XMLEventReader xmlEventReader,
-      final ImmutableLocation.Builder parentLocation) throws XMLStreamException {
+  @Override
+  public EntryOrRoute pullElement(final XMLEventReader xmlEventReader,
+      @Nullable final Location parentLocation) throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());
     final StartElement element =
@@ -33,8 +39,7 @@ public class EntryParser implements ElementPullParser<Entry> {
       if (peekedEvent.isStartElement()) {
         // A paragraph of text and other elements
         ElementToken.asStartElement(peekedEvent, ElementToken.PARAGRAPH);
-        entryBuilder.addParagraphs(paragraphParser.pullElement(xmlEventReader,
-            ImmutableLocation.builder().from(location)));
+        entryBuilder.addParagraphs(paragraphParser.pullElement(xmlEventReader,location));
 
       } else if (peekedEvent.isEndElement()) {
         // Close entry
@@ -46,11 +51,13 @@ public class EntryParser implements ElementPullParser<Entry> {
       }
     }
     entryBuilder.location(location);
-    return entryBuilder.build();
+
+    return ImmutableEntryOrRoute.builder()
+        .entry(entryBuilder.build()).build();
   }
 
-  private Location parseAttributes(ImmutableLocation.Builder parentLocation,
-      StartElement element, ImmutableEntry.Builder entryBuilder) {
+  private Location parseAttributes(final Location parentLocation,
+      final StartElement element, final ImmutableEntry.Builder entryBuilder) {
     Location location = locationParser.pullLocationAsAttributes(element, parentLocation,
         (attributeToken, attribute) -> {
           if (attributeToken == AttributeToken.DATE) {
@@ -59,7 +66,7 @@ public class EntryParser implements ElementPullParser<Entry> {
             throw new IllegalStateException("Unexpected attribute: " + attributeToken.name()
                 + " != DATE|" + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));
           }
-        }).build();
+        });
     entryBuilder.location(location);
     return location;
   }

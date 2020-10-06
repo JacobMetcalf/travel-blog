@@ -6,24 +6,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.xmlet.htmlapifaster.Body;
 import uk.co.jacobmetcalf.travelblog.model.Entry;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableEntry;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph;
+import uk.co.jacobmetcalf.travelblog.model.TestData;
 
 public class EntryTemplateTest {
 
   @Test
   public void renders_two_textual_paragraphs() {
-    Entry input = ImmutableEntry.builder()
-            .date(TestData.JUL_19)
-            .location(TestData.LOCATION_1)
-            .addParagraphs(ImmutableParagraph.builder()
-                .addParts(TestData.TEXT_1).build())
-            .addParagraphs(ImmutableParagraph.builder()
-                .addParts(TestData.TEXT_3).build())
-            .build();
 
-    String actualHtml = TestHelper.renderInDiv(d -> new EntryTemplate().add(d, input));
+    String actualHtml = TestHelper.<Body>renderInDiv(d -> new EntryTemplate().add(d, TestData.ENTRY_1));
 
     // We need to see the country and province on the entry header
     assert_closes_tags(actualHtml);
@@ -37,7 +31,7 @@ public class EntryTemplateTest {
   public void renders_an_image_in_a_paragraph() {
     Entry input = ImmutableEntry.builder()
           .date(TestData.JUL_19)
-          .location(TestData.LOCATION_1)
+          .location(TestData.QUITO)
           .addParagraphs(ImmutableParagraph.builder()
               .addImages(TestData.IMAGE_1)
               .addParts(TestData.TEXT_1).build())
@@ -45,7 +39,7 @@ public class EntryTemplateTest {
                 .addParts(TestData.TEXT_3).build())
           .build();
 
-    String actualHtml = TestHelper.renderInDiv(d -> new EntryTemplate().add(d, input));
+    String actualHtml = TestHelper.<Body>renderInDiv(d -> new EntryTemplate().add(d, input));
 
     assert_closes_tags(actualHtml);
     assertThat(actualHtml, Matchers.containsString("Start"));

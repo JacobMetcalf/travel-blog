@@ -1,17 +1,9 @@
-package uk.co.jacobmetcalf.travelblog.htmlrenderer;
+package uk.co.jacobmetcalf.travelblog.model;
 
 import java.time.LocalDate;
-import uk.co.jacobmetcalf.travelblog.model.Anchor;
-import uk.co.jacobmetcalf.travelblog.model.Image;
+import java.util.stream.Stream;
 import uk.co.jacobmetcalf.travelblog.model.Image.Position;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableAnchor;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableImage;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableText;
-import uk.co.jacobmetcalf.travelblog.model.Location;
-import uk.co.jacobmetcalf.travelblog.model.Text;
 import uk.co.jacobmetcalf.travelblog.xmlparser.AnchorParser;
-import uk.co.jacobmetcalf.travelblog.xmlparser.TestUtil;
 
 /**
  * Test data for tests to avoid repeating
@@ -20,7 +12,6 @@ public final class TestData {
   private TestData() {}
 
   public static final LocalDate JUL_19 = LocalDate.of(2018, 7, 19);
-  public static final LocalDate JUL_20 = LocalDate.of(2018, 7, 20);
 
   public static final Text TEXT_1 = ImmutableText.builder().text("Start").build();
   public static final Text TEXT_2 = ImmutableText.builder().text(" middle ").build();
@@ -34,7 +25,7 @@ public final class TestData {
       .text("Royal Entomological Society")
       .build();
 
-  public static final Location LOCATION_1 = ImmutableLocation.builder()
+  public static final Location QUITO = ImmutableLocation.builder()
       .location("Quito")
       .province("Pichincha")
       .country("Ecuador")
@@ -42,17 +33,49 @@ public final class TestData {
       .longitude(-78.5084)
       .build();
 
+  public static final Location ECUADOR = ImmutableLocation.builder()
+      .country("Ecuador")
+      .build();
+
   public static final Image IMAGE_1 = ImmutableImage.builder()
       .src("ecuador001")
       .title("Imabura with snow from hotel")
       .position(Position.LEFT)
-      .location(TestUtil.QUITO)
+      .location(QUITO)
       .build();
 
   public static final Image IMAGE_2 = ImmutableImage.builder()
       .src("ecuador002")
-      .title("Church and monastery of San Fransisc")
+      .title("Church and monastery of San Fransisco")
       .position(Position.RIGHT)
-      .location(TestUtil.QUITO)
+      .location(QUITO)
+      .build();
+
+  public static final Entry ENTRY_1 = ImmutableEntry.builder()
+      .date(TestData.JUL_19)
+      .location(TestData.QUITO)
+      .addParagraphs(ImmutableParagraph.builder()
+          .addParts(TestData.TEXT_1).build())
+      .addParagraphs(ImmutableParagraph.builder()
+          .addParts(TestData.TEXT_3).build())
+      .build();
+
+  public static final Route ROUTE_1 = ImmutableRoute.builder()
+      .addPoints(
+          ImmutablePoint.builder().latitude(10d).longitude(-40d).build(),
+          ImmutablePoint.builder().latitude(12d).longitude(-42d).build())
+      .build();
+
+  public static final Diary DIARY_NO_ENTRIES = ImmutableDiary.builder()
+      .title("Test title")
+      .thumb("test.gif")
+      .filename("test.xml")
+      .location(QUITO)
+      .entriesAndRoutes(Stream.empty())
+      .build();
+
+  public static final Book BOOK_1 = ImmutableBook.builder()
+      .title("Test book")
+      .isin("123ABC")
       .build();
 }

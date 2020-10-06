@@ -18,12 +18,13 @@ public enum AttributeToken {
   TITLE,
   SRC,
   THUMB,
-  KML;
+  KML,
+  ISIN;
 
   public static AttributeToken fromAttributeName(final Attribute attribute) {
 
     String name = attribute.getName().getLocalPart();
-    Preconditions.checkArgument(name.toLowerCase().equals(name),
+    Preconditions.checkState(name.toLowerCase().equals(name),
         "Attribute names should be lower case: " + name);
 
     return AttributeToken.valueOf(name.toUpperCase());

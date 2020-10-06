@@ -10,7 +10,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
 import uk.co.jacobmetcalf.travelblog.model.Location;
 
@@ -31,8 +31,8 @@ public class LocationParser implements ElementPullParser<Location> {
    * @throws XMLStreamException If could not parse Xml
    * @throws IllegalStateException If encounters Xml it is not expecting
    */
-  public Location pullElement(@NonNull final XMLEventReader xmlEventReader,
-      final ImmutableLocation.@NonNull Builder parentLocation)
+  public Location pullElement(final XMLEventReader xmlEventReader,
+      @Nullable final Location parentLocation)
       throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());
@@ -42,11 +42,12 @@ public class LocationParser implements ElementPullParser<Location> {
     String locationName = stringPullParser.pullString(xmlEventReader, ElementToken.LOCATION);
     ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.LOCATION); // consume end
 
-    ImmutableLocation.Builder curriedLocation = parentLocation.location(locationName);
-    return pullLocationAsAttributes(locationElement, curriedLocation,
+    Location locationWithName = ImmutableLocation.builder()
+        .from(parentLocation).location(locationName).build();
+
+    return pullLocationAsAttributes(locationElement, locationWithName,
         (a, b) -> { throw new IllegalStateException("Unexpected attribute: " + a
-          + ", expecting: " + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));})
-        .build();
+          + ", expecting: " + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));});
   }
 
   /**
@@ -55,26 +56,27 @@ public class LocationParser implements ElementPullParser<Location> {
    *                    dealing with a mix of attributes.
    * @return Location A location in the world.
    */
-  public ImmutableLocation.Builder pullLocationAsAttributes(
-      @NonNull final StartElement startElement,
-      final ImmutableLocation.@NonNull Builder parentLocation,
-      @NonNull final BiConsumer<AttributeToken, Attribute> handleOther) {
+  public Location pullLocationAsAttributes(
+      final StartElement startElement,
+      final Location parentLocation,
+      final BiConsumer<AttributeToken, Attribute> handleOther) {
 
+    ImmutableLocation.Builder location = ImmutableLocation.builder().from(parentLocation);
     Streams.stream(startElement.getAttributes())
         .forEach( a -> {
           AttributeToken attributeToken = AttributeToken.fromAttributeName(a);
           switch (attributeToken) {
-            case COUNTRY -> parentLocation.country(a.getValue());
-            case PROVINCE -> parentLocation.province(a.getValue());
-            case LOCATION -> parentLocation.location(a.getValue());
-            case LATITUDE -> parentLocation.latitude(Double.valueOf(a.getValue()));
-            case LONGITUDE -> parentLocation.longitude(Double.valueOf(a.getValue()));
-            case ZOOM -> parentLocation.zoom(Integer.parseInt(a.getValue()));
-            case WIKI -> parentLocation.wiki(AnchorParser.WIKIPEDIA_BASE + a.getValue());
+            case COUNTRY -> location.country(a.getValue());
+            case PROVINCE -> location.province(a.getValue());
+            case LOCATION -> location.location(a.getValue());
+            case LATITUDE -> location.latitude(Double.parseDouble(a.getValue()));
+            case LONGITUDE -> location.longitude(Double.parseDouble(a.getValue()));
+            case ZOOM -> location.zoom(Integer.parseInt(a.getValue()));
+            case WIKI -> location.wiki(AnchorParser.WIKIPEDIA_BASE + a.getValue());
             default -> handleOther.accept(attributeToken, a);
           }
         });
 
-    return parentLocation;
+    return location.build();
   }
 }

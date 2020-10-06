@@ -7,10 +7,10 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph.Builder;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableText;
+import uk.co.jacobmetcalf.travelblog.model.Location;
 import uk.co.jacobmetcalf.travelblog.model.Paragraph;
 
 /**
@@ -25,8 +25,7 @@ public class ParagraphParser implements ElementPullParser<Paragraph> {
 
   @Override
   public Paragraph pullElement(final XMLEventReader xmlEventReader,
-      final ImmutableLocation.Builder parentLocation)
-      throws XMLStreamException {
+      final Location parentLocation) throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());
     ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.PARAGRAPH);
@@ -56,7 +55,7 @@ public class ParagraphParser implements ElementPullParser<Paragraph> {
   }
 
   private void handleElement(final XMLEventReader xmlEventReader, final XMLEvent peekedEvent,
-      final ImmutableLocation.Builder parentLocation,
+      final Location parentLocation,
       final Builder paragraphBuilder) throws XMLStreamException {
 
       switch (ElementToken.fromEventName(peekedEvent)) {

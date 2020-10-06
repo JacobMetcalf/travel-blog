@@ -12,11 +12,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
-import uk.co.jacobmetcalf.travelblog.model.Entry;
+import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableDiary;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
+import uk.co.jacobmetcalf.travelblog.model.Location;
 
 /**
  * Pull parses an XML document into an ordered stream of Entry objects.
@@ -27,28 +27,33 @@ import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
 public class DiaryParser {
 
   private XMLEventReader xmlEventReader;
-  private ImmutableLocation.Builder rootLocation = ImmutableLocation.builder();
+  private Location rootLocation = ImmutableLocation.builder().build();
   private final LocationParser locationParser = new LocationParser();
+  private final BookPullParser bookParser = new BookPullParser();
   private final ImmutableDiary.Builder diaryBuilder = ImmutableDiary.builder();
 
-  public Diary parse(@NonNull final InputStream inputStream) throws XMLStreamException {
+  public Diary parse(final String filename, final InputStream inputStream) throws XMLStreamException {
 
     Preconditions.checkNotNull(inputStream, "Input stream cannot be null");
+    diaryBuilder.filename(filename);
 
     xmlEventReader = FilteredReaderFactory.create(inputStream);
 
     // Skip the start document
     XMLEvent event = xmlEventReader.nextEvent();
-    Preconditions.checkArgument(event.isStartDocument(), "Expected start of document");
+    Preconditions.checkState(event.isStartDocument(), "Expected start of document");
 
     // Process first two elements
     parseInitialElement(ElementToken.DIARY);
     parseInitialElement(ElementToken.SUMMARY);
     ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.SUMMARY);
+
+    // Process books
+    diaryBuilder.addAllBooks(bookParser.pullBooks(xmlEventReader));
     diaryBuilder.location(rootLocation);
 
     EventIterator iterator = new EventIterator();
-    diaryBuilder.entries(StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+    diaryBuilder.entriesAndRoutes(StreamSupport.stream(Spliterators.spliteratorUnknownSize(
         iterator, Spliterator.ORDERED | Spliterator.IMMUTABLE | Spliterator.NONNULL), false));
 
     return diaryBuilder.build();
@@ -60,16 +65,17 @@ public class DiaryParser {
    * to be on either of the elements.
    * @param elementToken The element type being processed
    */
-  private void parseInitialElement(@NonNull final ElementToken elementToken)
+  private void parseInitialElement(final ElementToken elementToken)
       throws XMLStreamException {
     StartElement diaryElement = ElementToken.asStartElement(xmlEventReader.nextEvent(),
         elementToken);
+
     rootLocation = locationParser.pullLocationAsAttributes(diaryElement,
         rootLocation, this::parseAdditionalAttributes);
   }
 
-  private void parseAdditionalAttributes(@NonNull final AttributeToken attributeToken,
-      @NonNull final Attribute attribute) {
+  private void parseAdditionalAttributes(final AttributeToken attributeToken,
+      final Attribute attribute) {
     switch (attributeToken) {
       case TITLE -> diaryBuilder.title(attribute.getValue());
       case THUMB -> diaryBuilder.thumb(attribute.getValue());
@@ -83,9 +89,9 @@ public class DiaryParser {
   /**
    * Iterator over the XML stream
    */
-  private class EventIterator implements Iterator<Entry> {
+  private class EventIterator implements Iterator<EntryOrRoute> {
 
-    private Entry nextEntry;
+    private EntryOrRoute nextEntry;
 
     public EventIterator() {
       next(); // Peek ahead
@@ -97,22 +103,24 @@ public class DiaryParser {
     }
 
     @Override
-    public Entry next() {
+    public EntryOrRoute next() {
 
       // Peek ahead pattern
-      Entry result = nextEntry;
+      EntryOrRoute result = nextEntry;
       try {
         nextEntry = null;
         if (xmlEventReader.hasNext()) {
           final XMLEvent peekEvent = xmlEventReader.peek();
+          ElementToken token = ElementToken.fromEventName(peekEvent);
           if (peekEvent.isEndElement()) {
             // Close of the diary element sets hasNext() to false
             ElementToken.checkEndElement(peekEvent, ElementToken.DIARY);
-          } else if (peekEvent.isStartElement() && peekEvent.asStartElement().getName()
-              .getLocalPart().equals(ElementToken.ENTRY.name().toLowerCase())) {
+          } else if (token == ElementToken.ENTRY) {
             nextEntry = new EntryParser().pullElement(xmlEventReader, rootLocation);
+          } else if (token == ElementToken.ROUTE) {
+            nextEntry = new RouteParser().pullElement(xmlEventReader, rootLocation);
           } else {
-            throw new RuntimeException("Unexpected event: " + peekEvent);
+            throw new IllegalStateException("Unexpected element: " + peekEvent);
           }
         }
       } catch (XMLStreamException ex) {

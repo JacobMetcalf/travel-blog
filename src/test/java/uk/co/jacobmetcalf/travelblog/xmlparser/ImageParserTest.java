@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.Image;
 import uk.co.jacobmetcalf.travelblog.model.Image.Position;
+import uk.co.jacobmetcalf.travelblog.model.TestData;
 
 public class ImageParserTest {
   public final ImageParser unit = new ImageParser();
@@ -15,13 +16,13 @@ public class ImageParserTest {
     String inputXml = "<image src=\"ecuador066\" position=\"right\" "
         + "province=\"Cotopaxi\" location=\"Chugchil&#225;n\" title=\"Tristerix longebracteatus\"/>";
 
-    Image actual = TestUtil.tryParse(inputXml, unit, TestUtil.quitoAsBuilder());
+    Image actual = TestHelper.tryParse(inputXml, unit, TestData.QUITO);
     assertThat(actual.getSrc(), equalTo("ecuador066"));
     assertThat(actual.getPosition(), equalTo(Position.RIGHT));
     assertThat(actual.getTitle(), equalTo("Tristerix longebracteatus"));
 
-    assertThat(actual.getLocation().getCountry(), equalTo("Ecuador"));
-    assertThat(actual.getLocation().getProvince(), equalTo("Cotopaxi"));
-    assertThat(actual.getLocation().getLocation(), equalTo("Chugchilán"));
+    assertThat(actual.getLocation().getCountry().orElseThrow(), equalTo("Ecuador"));
+    assertThat(actual.getLocation().getProvince().orElseThrow(), equalTo("Cotopaxi"));
+    assertThat(actual.getLocation().getLocation().orElseThrow(), equalTo("Chugchilán"));
   }
 }

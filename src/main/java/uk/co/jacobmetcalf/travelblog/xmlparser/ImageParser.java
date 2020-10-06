@@ -7,7 +7,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import uk.co.jacobmetcalf.travelblog.model.Image;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableImage;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
 import uk.co.jacobmetcalf.travelblog.model.Location;
 
 /**
@@ -18,13 +17,11 @@ public class ImageParser implements ElementPullParser<Image> {
   private final LocationParser locationParser = new LocationParser();
 
   public Image pullElement(final XMLEventReader xmlEventReader,
-      final ImmutableLocation.Builder parentLocation) throws XMLStreamException {
+      final Location parentLocation) throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());
     StartElement imageElement = ElementToken
         .asStartElement(xmlEventReader.nextEvent(), ElementToken.IMAGE);
-
-    //TODO: Possibly better that location
 
     final ImmutableImage.Builder imageBuilder = ImmutableImage.builder();
     Location location = locationParser.pullLocationAsAttributes(imageElement, parentLocation,
@@ -38,11 +35,10 @@ public class ImageParser implements ElementPullParser<Image> {
                   + " != SRC|POSITION|TITLE|"
                   + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));
           }
-        }).build();
+        });
 
     imageBuilder.location(location);
     ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.IMAGE);
     return imageBuilder.build();
-
   }
 }

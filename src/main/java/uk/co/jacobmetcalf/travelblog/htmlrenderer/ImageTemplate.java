@@ -6,18 +6,21 @@ import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.Figure;
 import uk.co.jacobmetcalf.travelblog.model.Image;
 
+/**
+ * Template for rendering an image.
+ */
 public class ImageTemplate {
-  public <Z extends Element<Z,?>> void add(final Div<Z> parent, final Image image) {
 
+  public <T extends Element<T,?>> Div<T> add(final Div<T> parent, final Image image) {
     // @formatter:off
-    parent
+    return parent
         .figure()
           .of(addAlignmentAttribute(image.getPosition()))
           .a().attrTarget("_blank")
             .attrHref("images/" + image.getSrc() + "-large.jpg")
             .img()
               .attrSrc("images/" + image.getSrc() + ".jpg")
-              .attrClass("figure-img img-fluid img-rounded")
+              .attrClass("figure-img img-fluid rounded")
               .attrTitle(image.getTitle() + ", "
                 + LocationTemplate.formatLocation(image.getLocation()))
               .attrStyle("border: 0")
@@ -33,10 +36,10 @@ public class ImageTemplate {
     // @formatter:on
   }
 
-  public <Z extends Element<Z,?>> Consumer<Figure<Div<Z>>> addAlignmentAttribute(final Image.Position position) {
+  private <T extends Element<T,?>> Consumer<Figure<Div<T>>> addAlignmentAttribute(final Image.Position position) {
     return f -> f.attrClass(switch (position) {
-      case LEFT -> "figure pull-md-left p-r-1 clear-left";
-      case RIGHT -> "figure pull-md-right p-l-1 clear-right";
+      case LEFT -> "figure float-md-left pr-3 clear-left";
+      case RIGHT -> "figure float-md-right pl-3 clear-right";
       case NONE -> "figure p-r-1";
     });
   }

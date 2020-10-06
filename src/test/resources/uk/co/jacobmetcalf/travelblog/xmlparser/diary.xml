@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <diary country="Ecuador" title="Ecuador: Another Inca trail and searching for bears in the cloud forest">
     <summary latitude="-1.7" longitude="-78.7" zoom="7" kml="ecuador.kml" thumb="ecuador-thumb.jpg"/>
-    <!--book isin="1742207855" title="Lonely Planet Ecuador"/>
+    <book isin="1742207855" title="Lonely Planet Ecuador"/>
     <book isin="0735222916" title="The Square and the Tower"/>
     <book isin="0807092495" title="Fallout: Diasters, Lies and the Legacy of the Nuclear Age"/>
-    <book isin="0307743659" title="The Shining"/-->
+    <book isin="0307743659" title="The Shining"/>
     <entry date="2018-07-19" country="Ecuador" province="Pichincha" location="Quito" latitude="-0.2181" longitude="-78.5084">
         <paragraph>
         	<image src="ecuador002" position="left" title="Church and monastery of San Fransisco"/>
@@ -356,7 +356,7 @@
            	<image src="ecuador124" position="left" title="Imabura with snow from hotel"/>
         </paragraph>
     </entry>
-    <!--route>
+    <route>
         <point longitude="-78.5086" latitude="-0.2179"/>
         <point longitude="-78.5142" latitude="-0.2232"/>
         <point longitude="-78.5208" latitude="-0.2217"/>
@@ -763,7 +763,7 @@
         <point longitude="-78.2713" latitude="0.2216"/>
         <point longitude="-78.2799" latitude="0.2196"/>
         <point longitude="-78.2878" latitude="0.2016"/>
-    </route-->
+    </route>
 </diary>
 
 
