@@ -1,6 +1,5 @@
 package uk.co.jacobmetcalf.travelblog.xmlparser;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -9,8 +8,6 @@ import java.util.Spliterators;
 import java.util.stream.StreamSupport;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
 import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
@@ -32,6 +29,14 @@ public class DiaryParser {
   private final BookPullParser bookParser = new BookPullParser();
   private final ImmutableDiary.Builder diaryBuilder = ImmutableDiary.builder();
 
+  private final AttributeParser<BuilderWithLocation<ImmutableDiary.Builder>> attributeParser =
+      locationParser.append(AttributeParser.<BuilderWithLocation<ImmutableDiary.Builder>>builder()
+          .withElementToken(ElementToken.DIARY)
+          .put(AttributeToken.TITLE, (b, a) -> b.outer().title(a.getValue()))
+          .put(AttributeToken.THUMB, (b, a) -> b.outer().thumb(a.getValue()))
+          .put(AttributeToken.KML,   (b, a) -> b.outer().kml(a.getValue())))
+          .build();
+
   public Diary parse(final String filename, final InputStream inputStream) throws XMLStreamException {
 
     Preconditions.checkNotNull(inputStream, "Input stream cannot be null");
@@ -43,10 +48,18 @@ public class DiaryParser {
     XMLEvent event = xmlEventReader.nextEvent();
     Preconditions.checkState(event.isStartDocument(), "Expected start of document");
 
-    // Process first two elements
-    parseInitialElement(ElementToken.DIARY);
-    parseInitialElement(ElementToken.SUMMARY);
+    // Process first two nested elements
+    // TODO: This is pretty fugly
+    final BuilderWithLocation<ImmutableDiary.Builder> builderWithLocation =
+        new BuilderWithLocation<>(diaryBuilder);
+
+    attributeParser.parse(builderWithLocation,
+        ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.DIARY));
+    attributeParser.parse(builderWithLocation,
+        ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.SUMMARY));
     ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.SUMMARY);
+
+    Location rootLocation = builderWithLocation.inner().build();
 
     // Process books
     diaryBuilder.addAllBooks(bookParser.pullBooks(xmlEventReader));
@@ -57,33 +70,6 @@ public class DiaryParser {
         iterator, Spliterator.ORDERED | Spliterator.IMMUTABLE | Spliterator.NONNULL), false));
 
     return diaryBuilder.build();
-  }
-
-  /**
-   * For some reason I decided to split the location between the diary element and
-   * a child summary element. The processing is simplified here by allowing the attributes
-   * to be on either of the elements.
-   * @param elementToken The element type being processed
-   */
-  private void parseInitialElement(final ElementToken elementToken)
-      throws XMLStreamException {
-    StartElement diaryElement = ElementToken.asStartElement(xmlEventReader.nextEvent(),
-        elementToken);
-
-    rootLocation = locationParser.pullLocationAsAttributes(diaryElement,
-        rootLocation, this::parseAdditionalAttributes);
-  }
-
-  private void parseAdditionalAttributes(final AttributeToken attributeToken,
-      final Attribute attribute) {
-    switch (attributeToken) {
-      case TITLE -> diaryBuilder.title(attribute.getValue());
-      case THUMB -> diaryBuilder.thumb(attribute.getValue());
-      case KML -> diaryBuilder.kml(attribute.getValue());
-      default -> throw new IllegalStateException("Unexpected attribute: " + attributeToken.name()
-          + " != TITLE|THUMB|KML|"
-          + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));
-    }
   }
 
   /**

@@ -3,6 +3,7 @@ package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.function.Consumer;
+import org.xmlet.htmlapifaster.Body;
 import org.xmlet.htmlapifaster.Div;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.P;
@@ -20,6 +21,13 @@ public class TestHelper {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     SimpleElementWriter writer = new SimpleElementWriter(new PrintStream(out));
     new P<Z>(writer).of(unitAdd).__();
+    return out.toString();
+  }
+
+  public static <Z extends Element<Z,?>> String renderInBody(final Consumer<Body<Z>> unitAdd) {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    SimpleElementWriter writer = new SimpleElementWriter(new PrintStream(out));
+    new Body<Z>(writer).of(unitAdd).__();
     return out.toString();
   }
 

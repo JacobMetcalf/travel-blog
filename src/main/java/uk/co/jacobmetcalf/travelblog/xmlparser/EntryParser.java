@@ -1,6 +1,5 @@
 package uk.co.jacobmetcalf.travelblog.xmlparser;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import java.time.LocalDate;
 import javax.xml.stream.XMLEventReader;
@@ -22,6 +21,13 @@ public class EntryParser implements ElementPullParser<EntryOrRoute> {
   private final LocationParser locationParser = new LocationParser();
   private final ParagraphParser paragraphParser = new ParagraphParser();
 
+  // TODO: This is pretty fugly
+  private final AttributeParser<BuilderWithLocation<ImmutableEntry.Builder>> attributeParser =
+      locationParser.append(AttributeParser.<BuilderWithLocation<ImmutableEntry.Builder>>builder()
+          .withElementToken(ElementToken.ENTRY)
+          .put(AttributeToken.DATE, (b, a) -> b.outer().date(LocalDate.parse(a.getValue()))))
+          .build();
+
   @Override
   public EntryOrRoute pullElement(final XMLEventReader xmlEventReader,
       @Nullable final Location parentLocation) throws XMLStreamException {
@@ -30,8 +36,13 @@ public class EntryParser implements ElementPullParser<EntryOrRoute> {
     final StartElement element =
         ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.ENTRY);
 
-    final ImmutableEntry.Builder entryBuilder = ImmutableEntry.builder();
-    Location location = parseAttributes(parentLocation, element, entryBuilder);
+    // TODO: This is pretty fugly
+    final BuilderWithLocation<ImmutableEntry.Builder> builderWithLocation =
+        new BuilderWithLocation<>(ImmutableEntry.builder(), parentLocation);
+    attributeParser.parse(builderWithLocation, element);
+    Location location = builderWithLocation.inner().build();
+    ImmutableEntry.Builder entryBuilder =
+        builderWithLocation.outer().location(location);
 
     boolean entryOpen = true;
     while (entryOpen && xmlEventReader.hasNext()) {
@@ -50,24 +61,8 @@ public class EntryParser implements ElementPullParser<EntryOrRoute> {
         throw new IllegalStateException("Unexpected event: " + peekedEvent);
       }
     }
-    entryBuilder.location(location);
 
     return ImmutableEntryOrRoute.builder()
         .entry(entryBuilder.build()).build();
-  }
-
-  private Location parseAttributes(final Location parentLocation,
-      final StartElement element, final ImmutableEntry.Builder entryBuilder) {
-    Location location = locationParser.pullLocationAsAttributes(element, parentLocation,
-        (attributeToken, attribute) -> {
-          if (attributeToken == AttributeToken.DATE) {
-            entryBuilder.date(LocalDate.parse(attribute.getValue()));
-          } else {
-            throw new IllegalStateException("Unexpected attribute: " + attributeToken.name()
-                + " != DATE|" + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));
-          }
-        });
-    entryBuilder.location(location);
-    return location;
   }
 }

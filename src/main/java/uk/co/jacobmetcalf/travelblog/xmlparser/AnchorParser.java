@@ -1,10 +1,8 @@
 package uk.co.jacobmetcalf.travelblog.xmlparser;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Streams;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import uk.co.jacobmetcalf.travelblog.model.Anchor;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableAnchor;
@@ -21,14 +19,20 @@ public class AnchorParser implements ElementPullParser<Anchor> {
   private final String base;
   private final StringPullParser stringPullParser = new StringPullParser();
 
+  private final AttributeParser<ImmutableAnchor.Builder> attributeParser;
+
   public AnchorParser() {
-    this.elementToken = ElementToken.A;
-    this.base = "";
+    this(ElementToken.A, "");
   }
 
   public AnchorParser(final ElementToken elementToken, final String base) {
     this.elementToken = elementToken;
     this.base = base;
+    this.attributeParser = AttributeParser.<ImmutableAnchor.Builder>builder()
+          .withElementToken(ElementToken.A)
+          .put(AttributeToken.REF, (b, a) -> b.ref(base + a.getValue()))
+          .put(AttributeToken.HREF, (b, a) -> b.ref(base + a.getValue()))
+          .build();
   }
 
   @Override
@@ -39,26 +43,11 @@ public class AnchorParser implements ElementPullParser<Anchor> {
     StartElement element = ElementToken
         .asStartElement(xmlEventReader.nextEvent(), elementToken);
 
-    final ImmutableAnchor.Builder anchorBuilder = ImmutableAnchor.builder();
-    Streams.stream(element.getAttributes())
-        .forEach(a -> parseAttribute(anchorBuilder, a));
+    Anchor result = attributeParser.parse(ImmutableAnchor.builder(), element)
+        .text(stringPullParser.pullString(xmlEventReader, elementToken))
+        .build();
 
-    anchorBuilder.text(stringPullParser.pullString(xmlEventReader, elementToken));
     ElementToken.checkEndElement(xmlEventReader.nextEvent(), elementToken); // consume end
-    return anchorBuilder.build();
-  }
-
-  /**
-   * Note: ref attribute can be absolute or relative to a specified base.
-   */
-  private void parseAttribute(final ImmutableAnchor.Builder anchorBuilder, final Attribute attribute) {
-    AttributeToken attributeToken = AttributeToken.fromAttributeName(attribute);
-    if (attributeToken == AttributeToken.REF || attributeToken == AttributeToken.HREF) {
-      anchorBuilder.ref(base + attribute.getValue());
-
-    } else {
-      throw new IllegalStateException("Unexpected attribute: "
-          + attribute.getName() + ", expected REF|HREF");
-    }
+    return result;
   }
 }

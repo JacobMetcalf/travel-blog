@@ -26,9 +26,9 @@ public class BookPullParser {
     while (ElementToken.fromEventName(xmlEventReader.peek()) == ElementToken.BOOK) {
       StartElement bookElement = ElementToken
           .asStartElement(xmlEventReader.nextEvent(), ElementToken.BOOK);
-      ImmutableBook.Builder bookBuilder = ImmutableBook.builder();
-      attributeParser.parse(bookBuilder, bookElement);
-      listBuilder.add(bookBuilder.build());
+
+      listBuilder.add(attributeParser.parse(ImmutableBook.builder(), bookElement)
+          .build());
       ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.BOOK);
     }
     return listBuilder.build();

@@ -12,8 +12,6 @@ import javax.xml.stream.events.StartElement;
 
 public class AttributeParser<B> {
 
-  //TODO: Use attributeParser more widely
-
   private final ImmutableMap<AttributeToken, BiConsumer<B,Attribute>> attributeMap;
   private final ElementToken elementToken;
 
@@ -28,7 +26,7 @@ public class AttributeParser<B> {
    * @param builder Builder which consumers operate on.
    * @param startElement Element to iterate over attributes of.
    */
-  public void parse(final B builder, final StartElement startElement) {
+  public B parse(final B builder, final StartElement startElement) {
     Streams.stream(startElement.getAttributes())
         .forEach( a -> {
           try {
@@ -39,6 +37,7 @@ public class AttributeParser<B> {
             throwError(builder, a);
           }
         });
+    return builder;
   }
 
   public void throwError(final B builder, final Attribute attribute) {
@@ -48,10 +47,6 @@ public class AttributeParser<B> {
 
   public static <B> Builder<B> builder() {
     return new Builder<>(new EnumMap<>(AttributeToken.class));
-  }
-
-  public static <B> Builder<B> builder(final AttributeParser<B> toClone) {
-    return new Builder<>(Maps.newEnumMap(toClone.attributeMap));
   }
 
   /**

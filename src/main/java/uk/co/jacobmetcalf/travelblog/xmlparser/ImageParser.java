@@ -1,6 +1,5 @@
 package uk.co.jacobmetcalf.travelblog.xmlparser;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
@@ -16,6 +15,16 @@ public class ImageParser implements ElementPullParser<Image> {
 
   private final LocationParser locationParser = new LocationParser();
 
+  // TODO: This is pretty fugly
+  private final AttributeParser<BuilderWithLocation<ImmutableImage.Builder>> attributeParser =
+      locationParser.append(AttributeParser.<BuilderWithLocation<ImmutableImage.Builder>>builder()
+          .withElementToken(ElementToken.IMAGE)
+          .put(AttributeToken.SRC, (b, a) -> b.outer().src(a.getValue()))
+          .put(AttributeToken.TITLE, (b, a) -> b.outer().title(a.getValue()))
+          .put(AttributeToken.POSITION, (b, a) -> b.outer().position(
+              Image.Position.valueOf(a.getValue().toUpperCase()))))
+          .build();
+
   public Image pullElement(final XMLEventReader xmlEventReader,
       final Location parentLocation) throws XMLStreamException {
 
@@ -23,22 +32,14 @@ public class ImageParser implements ElementPullParser<Image> {
     StartElement imageElement = ElementToken
         .asStartElement(xmlEventReader.nextEvent(), ElementToken.IMAGE);
 
-    final ImmutableImage.Builder imageBuilder = ImmutableImage.builder();
-    Location location = locationParser.pullLocationAsAttributes(imageElement, parentLocation,
-        (attributeToken, attribute) -> {
-          switch (attributeToken) {
-            case SRC -> imageBuilder.src(attribute.getValue());
-            case TITLE -> imageBuilder.title(attribute.getValue());
-            case POSITION -> imageBuilder.position(
-                  Image.Position.valueOf(attribute.getValue().toUpperCase()));
-            default -> throw new IllegalStateException("Unexpected attribute: " + attributeToken.name()
-                  + " != SRC|POSITION|TITLE|"
-                  + Joiner.on("|").join(LocationParser.EXPECTED_ATTRIBUTES));
-          }
-        });
+    // TODO: This is pretty fugly
+    final BuilderWithLocation<ImmutableImage.Builder> builderWithLocation =
+        new BuilderWithLocation<>(ImmutableImage.builder(), parentLocation);
+    attributeParser.parse(builderWithLocation, imageElement);
 
-    imageBuilder.location(location);
     ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.IMAGE);
-    return imageBuilder.build();
+
+    Location location = builderWithLocation.inner().build();
+    return builderWithLocation.outer().location(location).build();
   }
 }

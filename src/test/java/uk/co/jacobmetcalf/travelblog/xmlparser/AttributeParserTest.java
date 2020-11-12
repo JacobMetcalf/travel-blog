@@ -53,23 +53,23 @@ public class AttributeParserTest {
         "Unexpected attribute: unexpected='unexpected' of BOOK, expecting: COUNTRY"));
   }
 
-  @Test
-  public void can_extend_attribute_set() {
-    TestObject actual = new TestObject();
-    AttributeParser<TestObject> extendedUnit = AttributeParser.builder(unit)
-        .withElementToken(ElementToken.LOCATION)
-        .put(AttributeToken.PROVINCE, (b,a) -> b.setTestAttribute2(a.getValue()))
-        .build();
-
-    StartElement element = parse_xml_to_start("<test country=\"UK\" province=\"Yorkshire\">");
-    extendedUnit.parse(actual, element);
-
-    assertThat(actual.testAttribute, equalTo("UK"));
-    assertThat(actual.testAttribute2, equalTo("Yorkshire"));
-
-    // Check original not impacted
-    assertThrows(IllegalStateException.class, () -> unit.parse(actual, element));
-  }
+//  @Test
+//  public void can_extend_attribute_set() {
+//    TestObject actual = new TestObject();
+//    AttributeParser<TestObject> extendedUnit = AttributeParser.builder(unit)
+//        .withElementToken(ElementToken.LOCATION)
+//        .put(AttributeToken.PROVINCE, (b,a) -> b.setTestAttribute2(a.getValue()))
+//        .build();
+//
+//    StartElement element = parse_xml_to_start("<test country=\"UK\" province=\"Yorkshire\">");
+//    extendedUnit.parse(actual, element);
+//
+//    assertThat(actual.testAttribute, equalTo("UK"));
+//    assertThat(actual.testAttribute2, equalTo("Yorkshire"));
+//
+//    // Check original not impacted
+//    assertThrows(IllegalStateException.class, () -> unit.parse(actual, element));
+//  }
 
   private StartElement parse_xml_to_start(String inputXml) {
     try (
