@@ -11,13 +11,13 @@ import org.immutables.value.Value;
  */
 @ImmutableStyle
 @Value.Immutable
-public interface Diary extends Locatable {
-  String getTitle();
-  String getFilename();
-  String getThumb();
-  Optional<String> getKml();
-  List<Book> getBooks();
-  Stream<EntryOrRoute> getEntriesAndRoutes();
+public abstract class Diary implements Locatable {
+  public abstract String getTitle();
+  public abstract String getFilename();
+  public abstract String getThumb();
+  public abstract Optional<String> getKml();
+  public abstract List<Book> getBooks();
+  public abstract Stream<EntryOrRoute> getEntriesAndRoutes();
 
   // Extend builder for common attributes
   interface Builder extends Locatable.Builder {}
