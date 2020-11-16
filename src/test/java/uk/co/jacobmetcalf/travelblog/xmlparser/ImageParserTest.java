@@ -21,8 +21,8 @@ public class ImageParserTest {
     assertThat(actual.getPosition(), equalTo(Position.RIGHT));
     assertThat(actual.getTitle(), equalTo("Tristerix longebracteatus"));
 
-    assertThat(actual.getLocation().getCountry().orElseThrow(), equalTo("Ecuador"));
-    assertThat(actual.getLocation().getProvince().orElseThrow(), equalTo("Cotopaxi"));
-    assertThat(actual.getLocation().getLocation().orElseThrow(), equalTo("Chugchilán"));
+    assertThat(actual.getCountry().orElseThrow(), equalTo("Ecuador"));
+    assertThat(actual.getProvince().orElseThrow(), equalTo("Cotopaxi"));
+    assertThat(actual.getLocation().orElseThrow(), equalTo("Chugchilán"));
   }
 }

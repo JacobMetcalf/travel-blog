@@ -38,22 +38,22 @@ public final class TestData {
       .build();
 
   public static final Image IMAGE_1 = ImmutableImage.builder()
+      .from(QUITO)
       .src("ecuador001")
       .title("Imabura with snow from hotel")
       .position(Position.LEFT)
-      .location(QUITO)
       .build();
 
   public static final Image IMAGE_2 = ImmutableImage.builder()
+      .from(QUITO)
       .src("ecuador002")
       .title("Church and monastery of San Fransisco")
       .position(Position.RIGHT)
-      .location(QUITO)
       .build();
 
   public static final Entry ENTRY_1 = ImmutableEntry.builder()
+      .from(TestData.QUITO)
       .date(TestData.JUL_19)
-      .location(TestData.QUITO)
       .addParagraphs(ImmutableParagraph.builder()
           .addParts(TestData.TEXT_1).build())
       .addParagraphs(ImmutableParagraph.builder()
@@ -67,10 +67,10 @@ public final class TestData {
       .build();
 
   public static final Diary DIARY_NO_ENTRIES = ImmutableDiary.builder()
+      .from(QUITO)
       .title("Test title")
       .thumb("test.gif")
       .filename("test.xml")
-      .location(QUITO)
       .entriesAndRoutes(Stream.empty())
       .build();
 

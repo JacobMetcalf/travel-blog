@@ -7,7 +7,7 @@ import javax.xml.stream.events.XMLEvent;
 import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableEntryOrRoute;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableRoute;
-import uk.co.jacobmetcalf.travelblog.model.Location;
+import uk.co.jacobmetcalf.travelblog.model.Locatable;
 
 /**
  * Pulls a map route in a diary. Returns EntryOrRoute which allows the bulk of the diary
@@ -18,7 +18,7 @@ public class RouteParser implements ElementPullParser<EntryOrRoute> {
   private final PointParser pointParser = new PointParser();
 
   public EntryOrRoute pullElement(final XMLEventReader xmlEventReader,
-      final Location parentLocation) throws XMLStreamException {
+      final Locatable parentLocatable) throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());
     ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.ROUTE);
@@ -31,7 +31,7 @@ public class RouteParser implements ElementPullParser<EntryOrRoute> {
       if (peekedEvent.isStartElement()) {
         // Then it should be a point
         ElementToken.asStartElement(peekedEvent, ElementToken.POINT);
-        routeBuilder.addPoints(pointParser.pullElement(xmlEventReader, parentLocation));
+        routeBuilder.addPoints(pointParser.pullElement(xmlEventReader, parentLocatable));
 
       } else if (peekedEvent.isEndElement()) {
         // Should be close element of route

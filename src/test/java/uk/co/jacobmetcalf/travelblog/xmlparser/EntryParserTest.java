@@ -7,7 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDate;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import uk.co.jacobmetcalf.travelblog.model.Entry;
 import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
+import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableText;
 import uk.co.jacobmetcalf.travelblog.model.TestData;
 
@@ -23,7 +25,7 @@ public class EntryParserTest {
     EntryOrRoute actual = TestHelper.tryParse(inputXml, unit, TestData.ECUADOR);
     assertTrue(actual.getEntry().isPresent());
     assertThat(actual.getEntry().get().getDate(), equalTo( LocalDate.of(2018,7,19)));
-    assertThat(actual.getEntry().get().getLocation(), equalTo(TestData.QUITO));
+    assertLocationIdentical(actual.getEntry().get());
   }
 
   @Test
@@ -34,7 +36,7 @@ public class EntryParserTest {
 
     EntryOrRoute actual = TestHelper.tryParse(inputXml, unit, TestData.ECUADOR);
     assertTrue(actual.getEntry().isPresent());
-    assertThat(actual.getEntry().get().getLocation(), equalTo(TestData.QUITO));
+    assertLocationIdentical(actual.getEntry().get());
   }
 
   @Test
@@ -47,10 +49,14 @@ public class EntryParserTest {
     assertTrue(actual.getEntry().isPresent());
     actual.getEntry().ifPresent(e -> {
       assertThat(e.getDate(), equalTo(LocalDate.of(2018, 7, 19)));
-      assertThat(e.getLocation(), equalTo(TestData.QUITO));
+      assertLocationIdentical(e);
 
       assertThat(e.getParagraphs().get(0).getParts(),
           Matchers.contains(equalTo(ImmutableText.builder().text("Some text").build())));
     });
+  }
+
+  private void assertLocationIdentical(Entry entry) {
+    assertThat(ImmutableLocation.builder().from(entry).build(), equalTo(TestData.QUITO));
   }
 }

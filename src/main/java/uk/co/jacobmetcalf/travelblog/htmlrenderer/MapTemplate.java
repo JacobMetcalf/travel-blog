@@ -6,7 +6,7 @@ import org.xmlet.htmlapifaster.Div;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.EnumTypeScriptType;
 import org.xmlet.htmlapifaster.Script;
-import uk.co.jacobmetcalf.travelblog.model.Location;
+import uk.co.jacobmetcalf.travelblog.model.Locatable;
 import uk.co.jacobmetcalf.travelblog.model.Route;
 
 /**
@@ -15,10 +15,10 @@ import uk.co.jacobmetcalf.travelblog.model.Route;
  */
 public class MapTemplate {
 
-  private final Location centre;
+  private final Locatable centre;
   private final String apiKey;
 
-  public MapTemplate(final Location centre, final String apiKey) {
+  public MapTemplate(final Locatable centre, final String apiKey) {
     Preconditions.checkArgument(centre.hasCoords(), "Map centre must have coordinates");
     this.centre = centre;
     this.apiKey = apiKey;
@@ -45,14 +45,14 @@ public class MapTemplate {
    * dictionary which will be rendered as points on the map.
    */
   public static <T extends Element<T,?>> Script<T> addLocation(
-      final Script<T> script, final Location location) {
+      final Script<T> script, final Locatable locatable) {
 
-    if (!location.hasCoords() || location.getLocation().isEmpty()) { return script; }
+    if (!locatable.hasCoords() || locatable.getLocation().isEmpty()) { return script; }
 
     return script.attrType(EnumTypeScriptType.TEXT_JAVASCRIPT)
-        .text("locations[\"" + location.getLocation().get()
-            + "\"] = {lat:" + location.getLatitude().orElse(0d)
-            + ",lng:" + location.getLongitude().orElse(0d) + "};");
+        .text("locations[\"" + locatable.getLocation().get()
+            + "\"] = {lat:" + locatable.getLatitude().orElse(0d)
+            + ",lng:" + locatable.getLongitude().orElse(0d) + "};");
   }
 
   /**

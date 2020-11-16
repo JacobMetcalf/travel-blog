@@ -31,8 +31,8 @@ public class EntryTemplateTest {
   @Test
   public void renders_an_image_in_a_paragraph() {
     Entry input = ImmutableEntry.builder()
+          .from(TestData.QUITO)
           .date(TestData.JUL_19)
-          .location(TestData.QUITO)
           .addParagraphs(ImmutableParagraph.builder()
               .addImages(TestData.IMAGE_1)
               .addParts(TestData.TEXT_1).build())

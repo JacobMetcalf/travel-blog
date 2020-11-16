@@ -6,6 +6,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import uk.co.jacobmetcalf.travelblog.model.Anchor;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableAnchor;
+import uk.co.jacobmetcalf.travelblog.model.Locatable;
 import uk.co.jacobmetcalf.travelblog.model.Location;
 
 /**
@@ -36,7 +37,7 @@ public class AnchorParser implements ElementPullParser<Anchor> {
   }
 
   @Override
-  public Anchor pullElement(final XMLEventReader xmlEventReader, final Location parentLocation)
+  public Anchor pullElement(final XMLEventReader xmlEventReader, final Locatable parentLocatable)
       throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());

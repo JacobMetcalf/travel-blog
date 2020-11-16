@@ -1,6 +1,5 @@
 package uk.co.jacobmetcalf.travelblog.model;
 
-import java.util.Optional;
 import org.immutables.value.Value;
 
 /**
@@ -9,22 +8,9 @@ import org.immutables.value.Value;
  */
 @ImmutableStyle
 @Value.Immutable
-public abstract class Location implements ParagraphPart {
-  public abstract Optional<String> getCountry();
-  public abstract Optional<String> getProvince();
-  public abstract Optional<String> getLocation();
-  public abstract Optional<Double> getLongitude();
-  public abstract Optional<Double> getLatitude();
-  public abstract Optional<String> getWiki();
+public abstract class Location implements Locatable, ParagraphPart {
 
-  @Value.Default
-  public int getZoom() {
-    return 13;
-  }
-
-  public boolean hasCoords() {
-    return getLongitude().isPresent() && getLatitude().isPresent();
-  }
+  interface Builder extends Locatable.Builder {}
 
   public void visit(final ParagraphPart.Visitor visitor) {
     visitor.visit(this);

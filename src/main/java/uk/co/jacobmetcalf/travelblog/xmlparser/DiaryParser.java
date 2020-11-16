@@ -29,12 +29,12 @@ public class DiaryParser {
   private final BookPullParser bookParser = new BookPullParser();
   private final ImmutableDiary.Builder diaryBuilder = ImmutableDiary.builder();
 
-  private final AttributeParser<BuilderWithLocation<ImmutableDiary.Builder>> attributeParser =
-      locationParser.append(AttributeParser.<BuilderWithLocation<ImmutableDiary.Builder>>builder()
+  private final AttributeParser<ImmutableDiary.Builder> attributeParser =
+      locationParser.addLocationAttributes(AttributeParser.<ImmutableDiary.Builder>builder()
           .withElementToken(ElementToken.DIARY)
-          .put(AttributeToken.TITLE, (b, a) -> b.outer().title(a.getValue()))
-          .put(AttributeToken.THUMB, (b, a) -> b.outer().thumb(a.getValue()))
-          .put(AttributeToken.KML,   (b, a) -> b.outer().kml(a.getValue())))
+          .put(AttributeToken.TITLE, (b, a) -> b.title(a.getValue()))
+          .put(AttributeToken.THUMB, (b, a) -> b.thumb(a.getValue()))
+          .put(AttributeToken.KML,   (b, a) -> b.kml(a.getValue())))
           .build();
 
   public Diary parse(final String filename, final InputStream inputStream) throws XMLStreamException {
@@ -49,25 +49,21 @@ public class DiaryParser {
     Preconditions.checkState(event.isStartDocument(), "Expected start of document");
 
     // Process first two nested elements
-    // TODO: This is pretty fugly
-    final BuilderWithLocation<ImmutableDiary.Builder> builderWithLocation =
-        new BuilderWithLocation<>(diaryBuilder);
 
-    attributeParser.parse(builderWithLocation,
+
+    attributeParser.parse(diaryBuilder,
         ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.DIARY));
-    attributeParser.parse(builderWithLocation,
+    attributeParser.parse(diaryBuilder,
         ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.SUMMARY));
     ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.SUMMARY);
 
-    Location rootLocation = builderWithLocation.inner().build();
-
     // Process books
     diaryBuilder.addAllBooks(bookParser.pullBooks(xmlEventReader));
-    diaryBuilder.location(rootLocation);
 
     EventIterator iterator = new EventIterator();
     diaryBuilder.entriesAndRoutes(StreamSupport.stream(Spliterators.spliteratorUnknownSize(
-        iterator, Spliterator.ORDERED | Spliterator.IMMUTABLE | Spliterator.NONNULL), false));
+        iterator, Spliterator.ORDERED | Spliterator.IMMUTABLE | Spliterator.NONNULL),
+        false));
 
     return diaryBuilder.build();
   }

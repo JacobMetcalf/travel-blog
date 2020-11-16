@@ -9,8 +9,10 @@ import org.immutables.value.Value;
  */
 @ImmutableStyle
 @Value.Immutable
-public abstract class Entry {
-  public abstract LocalDate getDate();
-  public abstract Location getLocation();
-  public abstract List<Paragraph> getParagraphs();
+public interface Entry extends Locatable {
+  LocalDate getDate();
+  List<Paragraph> getParagraphs();
+
+  // Extend builder for common attributes
+  interface Builder extends Locatable.Builder {}
 }

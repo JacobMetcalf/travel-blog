@@ -10,6 +10,7 @@ import javax.xml.stream.events.XMLEvent;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph.Builder;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableText;
+import uk.co.jacobmetcalf.travelblog.model.Locatable;
 import uk.co.jacobmetcalf.travelblog.model.Location;
 import uk.co.jacobmetcalf.travelblog.model.Paragraph;
 
@@ -25,7 +26,7 @@ public class ParagraphParser implements ElementPullParser<Paragraph> {
 
   @Override
   public Paragraph pullElement(final XMLEventReader xmlEventReader,
-      final Location parentLocation) throws XMLStreamException {
+      final Locatable parentLocatable) throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());
     ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.PARAGRAPH);
@@ -40,7 +41,7 @@ public class ParagraphParser implements ElementPullParser<Paragraph> {
         handleCharacters(xmlEventReader, paragraphBuilder);
 
       } else if (peekedEvent.isStartElement()) {
-        handleElement(xmlEventReader, peekedEvent, parentLocation, paragraphBuilder);
+        handleElement(xmlEventReader, peekedEvent, parentLocatable, paragraphBuilder);
 
       } else if (peekedEvent.isEndElement()) {
         // Close paragraph
@@ -55,18 +56,18 @@ public class ParagraphParser implements ElementPullParser<Paragraph> {
   }
 
   private void handleElement(final XMLEventReader xmlEventReader, final XMLEvent peekedEvent,
-      final Location parentLocation,
+      final Locatable parentLocatable,
       final Builder paragraphBuilder) throws XMLStreamException {
 
       switch (ElementToken.fromEventName(peekedEvent)) {
         case IMAGE -> paragraphBuilder.addImages(
-            imageParser.pullElement(xmlEventReader, parentLocation));
+            imageParser.pullElement(xmlEventReader, parentLocatable));
         case WIKI -> paragraphBuilder.addParts(
-            wikiParser.pullElement(xmlEventReader, parentLocation));
+            wikiParser.pullElement(xmlEventReader, parentLocatable));
         case A -> paragraphBuilder.addParts(
-            plainAnchorParser.pullElement(xmlEventReader, parentLocation));
+            plainAnchorParser.pullElement(xmlEventReader, parentLocatable));
         case LOCATION -> paragraphBuilder.addParts(
-            locationParser.pullElement(xmlEventReader, parentLocation));
+            locationParser.pullElement(xmlEventReader, parentLocatable));
         default -> throw new IllegalStateException("Unexpected element: "
             + ElementToken.fromEventName(peekedEvent));
       }

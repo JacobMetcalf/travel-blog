@@ -7,10 +7,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import uk.co.jacobmetcalf.travelblog.model.Entry;
 import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableEntry;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableEntryOrRoute;
-import uk.co.jacobmetcalf.travelblog.model.Location;
+import uk.co.jacobmetcalf.travelblog.model.Locatable;
 
 /**
  * Pulls an entry in a diary. Returns EntryOrRoute which allows the bulk of the diary
@@ -21,28 +22,25 @@ public class EntryParser implements ElementPullParser<EntryOrRoute> {
   private final LocationParser locationParser = new LocationParser();
   private final ParagraphParser paragraphParser = new ParagraphParser();
 
-  // TODO: This is pretty fugly
-  private final AttributeParser<BuilderWithLocation<ImmutableEntry.Builder>> attributeParser =
-      locationParser.append(AttributeParser.<BuilderWithLocation<ImmutableEntry.Builder>>builder()
+  private final AttributeParser<ImmutableEntry.Builder> attributeParser =
+      locationParser.addLocationAttributes(AttributeParser.<ImmutableEntry.Builder>builder()
           .withElementToken(ElementToken.ENTRY)
-          .put(AttributeToken.DATE, (b, a) -> b.outer().date(LocalDate.parse(a.getValue()))))
+          .put(AttributeToken.DATE, (b, a) -> b.date(LocalDate.parse(a.getValue()))))
           .build();
 
   @Override
   public EntryOrRoute pullElement(final XMLEventReader xmlEventReader,
-      @Nullable final Location parentLocation) throws XMLStreamException {
+      @Nullable final Locatable parentLocatable) throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());
     final StartElement element =
         ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.ENTRY);
 
-    // TODO: This is pretty fugly
-    final BuilderWithLocation<ImmutableEntry.Builder> builderWithLocation =
-        new BuilderWithLocation<>(ImmutableEntry.builder(), parentLocation);
-    attributeParser.parse(builderWithLocation, element);
-    Location location = builderWithLocation.inner().build();
     ImmutableEntry.Builder entryBuilder =
-        builderWithLocation.outer().location(location);
+        attributeParser.parse(ImmutableEntry.builder().from(parentLocatable), element);
+
+    Entry entryPreview = entryBuilder.build();
+    entryBuilder = ImmutableEntry.builder().from(entryPreview);
 
     boolean entryOpen = true;
     while (entryOpen && xmlEventReader.hasNext()) {
@@ -50,7 +48,7 @@ public class EntryParser implements ElementPullParser<EntryOrRoute> {
       if (peekedEvent.isStartElement()) {
         // A paragraph of text and other elements
         ElementToken.asStartElement(peekedEvent, ElementToken.PARAGRAPH);
-        entryBuilder.addParagraphs(paragraphParser.pullElement(xmlEventReader,location));
+        entryBuilder.addParagraphs(paragraphParser.pullElement(xmlEventReader, entryPreview));
 
       } else if (peekedEvent.isEndElement()) {
         // Close entry

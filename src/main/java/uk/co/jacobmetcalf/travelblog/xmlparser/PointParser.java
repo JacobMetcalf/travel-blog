@@ -5,7 +5,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import uk.co.jacobmetcalf.travelblog.model.ImmutablePoint;
-import uk.co.jacobmetcalf.travelblog.model.Location;
+import uk.co.jacobmetcalf.travelblog.model.Locatable;
 import uk.co.jacobmetcalf.travelblog.model.Point;
 
 /**
@@ -28,7 +28,7 @@ public class PointParser implements ElementPullParser<Point> {
    */
   @Override
   public Point pullElement(final XMLEventReader xmlEventReader,
-      final Location parentLocation) throws XMLStreamException {
+      final Locatable parentLocatable) throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());
     StartElement pointElement = ElementToken

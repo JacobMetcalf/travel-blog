@@ -59,7 +59,7 @@ public class DiaryTemplate {
     this.diary = diary;
     this.headerTemplate = new NavbarTemplate(diary);
     this.footerTemplate = new FooterTemplate("jacobmetcalf");
-    this.mapTemplate = new MapTemplate(diary.getLocation(), googleApiKey);
+    this.mapTemplate = new MapTemplate(diary, googleApiKey);
     this.bookTemplate = new BookTemplate(diary.getBooks(), amazonAssociatesKey);
     this.elementVisitor = elementVisitor;
 

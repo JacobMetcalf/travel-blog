@@ -8,7 +8,7 @@ import org.xmlet.htmlapifaster.Div;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.Span;
 import uk.co.jacobmetcalf.travelblog.model.Entry;
-import uk.co.jacobmetcalf.travelblog.model.Location;
+import uk.co.jacobmetcalf.travelblog.model.Locatable;
 
 public class EntryTemplate {
 
@@ -30,7 +30,7 @@ public class EntryTemplate {
             .of(h -> h.text(formatDate(entry.getDate())))
             .span()
               .attrClass("float-md-right")
-              .of(addLocation(entry.getLocation()))
+              .of(addLocation(entry))
             .__()
           .__()
         .__()
@@ -42,8 +42,8 @@ public class EntryTemplate {
   /**
    * Since the location element is heavily nested use a generic method
    */
-  private <X extends Element<X,?>> Consumer<Span<X>> addLocation(final Location location) {
-    return s -> locationTemplate.add(s, location, true);
+  private <X extends Element<X,?>> Consumer<Span<X>> addLocation(final Locatable locatable) {
+    return s -> locationTemplate.add(s, locatable, true);
   }
 
   static String formatDate(final @NonNull LocalDate date) {

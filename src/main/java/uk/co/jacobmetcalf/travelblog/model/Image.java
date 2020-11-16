@@ -4,12 +4,14 @@ import org.immutables.value.Value;
 
 @ImmutableStyle
 @Value.Immutable
-public abstract class Image {
+public interface Image extends Locatable {
 
-  public enum Position {LEFT, RIGHT, NONE}
+  enum Position {LEFT, RIGHT, NONE}
 
-  public abstract String getSrc();
-  public abstract Position getPosition();
-  public abstract Location getLocation();
-  public abstract String getTitle();
+  String getSrc();
+  Position getPosition();
+  String getTitle();
+
+  // Extend builder for common attributes
+  interface Builder extends Locatable.Builder {}
 }

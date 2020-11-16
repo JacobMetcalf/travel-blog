@@ -22,7 +22,7 @@ public class ImageTemplate {
               .attrSrc("images/" + image.getSrc() + ".jpg")
               .attrClass("figure-img img-fluid rounded")
               .attrTitle(image.getTitle() + ", "
-                + LocationTemplate.formatLocation(image.getLocation()))
+                + LocationTemplate.formatLocatable(image))
               .attrStyle("border: 0")
             .__()
           .__()
@@ -30,7 +30,7 @@ public class ImageTemplate {
             .attrClass("figure-caption")
             .text(image.getTitle())
             .br().__()
-            .text("(" + LocationTemplate.formatLocation(image.getLocation()) + ")")
+            .text("(" + LocationTemplate.formatLocatable(image) + ")")
           .__()
         .__();
     // @formatter:on

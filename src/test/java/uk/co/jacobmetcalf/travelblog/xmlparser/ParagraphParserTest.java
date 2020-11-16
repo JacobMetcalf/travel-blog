@@ -57,10 +57,11 @@ public class ParagraphParserTest {
 
     MatcherAssert.assertThat(actual.getImages(),
         Matchers.contains(
-          equalTo(ImmutableImage.builder().title("An image")
+          equalTo(ImmutableImage.builder()
+              .from(TestData.QUITO)
+              .title("An image")
               .src("ecuador001")
               .position(Position.LEFT)
-              .location(TestData.QUITO)
               .build())));
 
     MatcherAssert.assertThat(actual.getParts(),
