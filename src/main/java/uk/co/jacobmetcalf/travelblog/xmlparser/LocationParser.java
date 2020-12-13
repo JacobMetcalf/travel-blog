@@ -24,7 +24,7 @@ public class LocationParser implements ElementPullParser<Location> {
         .put(AttributeToken.LATITUDE, (b, a) -> b.latitude(Double.parseDouble(a.getValue())))
         .put(AttributeToken.LONGITUDE, (b, a) -> b.longitude(Double.parseDouble(a.getValue())))
         .put(AttributeToken.ZOOM, (b, a) -> b.zoom(Integer.parseInt(a.getValue())))
-        .put(AttributeToken.WIKI, (b, a) -> b.wiki(AnchorParser.WIKIPEDIA_BASE + a.getValue()));
+        .put(AttributeToken.WIKI, (b, a) -> b.wiki(AnchorPullParser.WIKIPEDIA_BASE + a.getValue()));
   }
 
   private final AttributeParser<ImmutableLocation.Builder> attributeParser =
@@ -46,7 +46,9 @@ public class LocationParser implements ElementPullParser<Location> {
     StartElement locationElement = ElementToken
         .asStartElement(xmlEventReader.nextEvent(), ElementToken.LOCATION);
 
-    String locationName = stringPullParser.pullString(xmlEventReader, ElementToken.LOCATION);
+    String locationName = stringPullParser.pullString(xmlEventReader, ElementToken.LOCATION)
+        .orElseThrow(() -> new IllegalStateException("Content of Location element not optional"));
+
     ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.LOCATION); // consume end
 
     return attributeParser.parse(ImmutableLocation.builder().from(parentLocatable), locationElement)

@@ -12,7 +12,7 @@ import uk.co.jacobmetcalf.travelblog.model.ImmutableBook;
  * Slightly different pattern in that it pulls until it has run out of books and then
  * exits. Uses a peek so will not start consuming the next element.
  */
-public class BookPullParser {
+public class BookPullParser implements MultipleElementPullParser<Book> {
 
   private final AttributeParser<ImmutableBook.Builder> attributeParser =
       AttributeParser.<ImmutableBook.Builder>builder()
@@ -21,7 +21,8 @@ public class BookPullParser {
           .put(AttributeToken.TITLE, (b, a) -> b.title(a.getValue()))
           .build();
 
-  public List<Book> pullBooks(final XMLEventReader xmlEventReader) throws XMLStreamException {
+  @Override
+  public List<Book> pullElements(final XMLEventReader xmlEventReader) throws XMLStreamException {
     ImmutableList.Builder<Book> listBuilder = ImmutableList.builder();
     while (ElementToken.fromEventName(xmlEventReader.peek()) == ElementToken.BOOK) {
       StartElement bookElement = ElementToken

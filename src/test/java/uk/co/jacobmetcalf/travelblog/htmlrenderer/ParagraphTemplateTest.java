@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph;
 import uk.co.jacobmetcalf.travelblog.model.Paragraph;
 import uk.co.jacobmetcalf.travelblog.model.TestData;
-import uk.co.jacobmetcalf.travelblog.xmlparser.AnchorParser;
+import uk.co.jacobmetcalf.travelblog.xmlparser.AnchorPullParser;
 
 public class ParagraphTemplateTest {
 
@@ -59,7 +59,7 @@ public class ParagraphTemplateTest {
     assertThat(actualHtml, startsWith("<div><p>Start"));
     assertThat(actualHtml, endsWith("end.</p></div>"));
     assertThat(actualHtml, containsString("href=\""
-        + AnchorParser.WIKIPEDIA_BASE + "Quito\""));
+        + AnchorPullParser.WIKIPEDIA_BASE + "Quito\""));
   }
 
   @Test
@@ -93,7 +93,7 @@ public class ParagraphTemplateTest {
     assertThat(actualHtml, containsString("src=\"images/ecuador001.jpg\""));
     assertThat(actualHtml, containsString(" middle "));
     assertThat(actualHtml, containsString("href=\""
-        + AnchorParser.WIKIPEDIA_BASE + "Quito\""));
+        + AnchorPullParser.WIKIPEDIA_BASE + "Quito\""));
     assertThat(actualHtml, containsString("map.setCenter({lat:-0.2181,lng:-78.5084})"));
     assertThat(actualHtml, endsWith("end.</p></div>"));
   }

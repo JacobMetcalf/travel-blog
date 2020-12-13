@@ -26,8 +26,10 @@ public class DiaryParser {
   private XMLEventReader xmlEventReader;
   private Location rootLocation = ImmutableLocation.builder().build();
   private final LocationParser locationParser = new LocationParser();
+  private final AnchorPullParser navigationParser = new AnchorPullParser( ElementToken.NAVIGATION, "");
   private final BookPullParser bookParser = new BookPullParser();
   private final ImmutableDiary.Builder diaryBuilder = ImmutableDiary.builder();
+  private final StringPullParser stringPullParser = new StringPullParser();
 
   private final AttributeParser<ImmutableDiary.Builder> attributeParser =
       locationParser.addLocationAttributes(AttributeParser.<ImmutableDiary.Builder>builder()
@@ -42,30 +44,36 @@ public class DiaryParser {
     Preconditions.checkNotNull(inputStream, "Input stream cannot be null");
     diaryBuilder.filename(filename);
 
-    xmlEventReader = FilteredReaderFactory.create(inputStream);
+    try {
+      xmlEventReader = FilteredReaderFactory.create(inputStream);
 
-    // Skip the start document
-    XMLEvent event = xmlEventReader.nextEvent();
-    Preconditions.checkState(event.isStartDocument(), "Expected start of document");
+      // Skip the start document
+      XMLEvent event = xmlEventReader.nextEvent();
+      Preconditions.checkState(event.isStartDocument(), "Expected start of document");
 
-    // Process first two nested elements
+      // Process first two nested elements
+      attributeParser.parse(diaryBuilder,
+          ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.DIARY));
+      attributeParser.parse(diaryBuilder,
+          ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.SUMMARY));
 
+      diaryBuilder.summary(stringPullParser.pullString(xmlEventReader, ElementToken.SUMMARY));
+      ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.SUMMARY);
 
-    attributeParser.parse(diaryBuilder,
-        ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.DIARY));
-    attributeParser.parse(diaryBuilder,
-        ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.SUMMARY));
-    ElementToken.checkEndElement(xmlEventReader.nextEvent(), ElementToken.SUMMARY);
+      // Process navigation and books
+      diaryBuilder.addAllNavigationAnchors(navigationParser.pullElements(xmlEventReader));
+      diaryBuilder.addAllBooks(bookParser.pullElements(xmlEventReader));
 
-    // Process books
-    diaryBuilder.addAllBooks(bookParser.pullBooks(xmlEventReader));
+      EventIterator iterator = new EventIterator();
+      diaryBuilder.entriesAndRoutes(StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+          iterator, Spliterator.ORDERED | Spliterator.IMMUTABLE | Spliterator.NONNULL),
+          false));
 
-    EventIterator iterator = new EventIterator();
-    diaryBuilder.entriesAndRoutes(StreamSupport.stream(Spliterators.spliteratorUnknownSize(
-        iterator, Spliterator.ORDERED | Spliterator.IMMUTABLE | Spliterator.NONNULL),
-        false));
+      return diaryBuilder.build();
 
-    return diaryBuilder.build();
+    } finally {
+      xmlEventReader.close();
+    }
   }
 
   /**

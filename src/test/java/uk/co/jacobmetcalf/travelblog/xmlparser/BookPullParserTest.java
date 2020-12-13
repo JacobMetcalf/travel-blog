@@ -68,7 +68,7 @@ public class BookPullParserTest {
       // Skip start document
       Assertions.assertTrue(xmlEventReader.nextEvent().isStartDocument());
       ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.DIARY);
-      return unit.pullBooks(xmlEventReader);
+      return unit.pullElements(xmlEventReader);
 
     } catch (XMLStreamException | IOException ex) {
       throw new RuntimeException("Could not read xml", ex);

@@ -3,7 +3,7 @@ package uk.co.jacobmetcalf.travelblog.model;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 import uk.co.jacobmetcalf.travelblog.model.Image.Position;
-import uk.co.jacobmetcalf.travelblog.xmlparser.AnchorParser;
+import uk.co.jacobmetcalf.travelblog.xmlparser.AnchorPullParser;
 
 /**
  * Test data for tests to avoid repeating
@@ -18,7 +18,7 @@ public final class TestData {
   public static final Text TEXT_3 = ImmutableText.builder().text(" end.").build();
 
   public static final Anchor WIKI_LINK = ImmutableAnchor.builder()
-      .ref(AnchorParser.WIKIPEDIA_BASE + "Quito").text("Quito").build();
+      .ref(AnchorPullParser.WIKIPEDIA_BASE + "Quito").text("Quito").build();
 
   public static final Anchor HREF_1 = ImmutableAnchor.builder()
       .ref("https://www.royensoc.co.uk/identifying-insects")

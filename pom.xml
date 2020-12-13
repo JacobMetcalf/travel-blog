@@ -13,9 +13,23 @@
         <immutables.version>2.8.2</immutables.version>
         <guava.version>29.0-jre</guava.version>
         <htmlflow.version>3.5</htmlflow.version>
+        <jcommander.version>1.78</jcommander.version>
+        <commons.io.version>2.8.0</commons.io.version>
         <jdk.version>14</jdk.version>
         <junit5.version>5.6.2</junit5.version>
+        <slf4j.version>2.0.0-alpha1</slf4j.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Not very clear why this is needed see: https://github.com/immutables/immutables/issues/713 -->
@@ -39,6 +53,17 @@
         </dependency>
 
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.xmlet</groupId>
             <artifactId>xsdAsmFaster</artifactId>
             <version>1.0.5</version>
@@ -49,6 +74,18 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+            <version>${jcommander.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
         </dependency>
 
         <!-- Test dependencies -->
@@ -116,6 +153,29 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
+            <!--plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>uk.co.jacobmetcalf.travelblog.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin-->
+
+
             <!-- JUnit 5 requires Surefire version 2.22.0 or higher, but you need 3 to fix compatibility issue-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

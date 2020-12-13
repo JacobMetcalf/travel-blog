@@ -16,6 +16,7 @@ public enum ElementToken {
   WIKI,
   A,
   SUMMARY,
+  NAVIGATION,
   BOOK,
   ROUTE,
   POINT;

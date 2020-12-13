@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.Anchor;
 import uk.co.jacobmetcalf.travelblog.model.TestData;
 
-public class AnchorParserTest {
+public class AnchorPullParserTest {
 
-  public final AnchorParser unit  = new AnchorParser(ElementToken.WIKI, AnchorParser.WIKIPEDIA_BASE);
-  public final AnchorParser unit2 = new AnchorParser();
+  public final AnchorPullParser unit  = new AnchorPullParser(ElementToken.WIKI, AnchorPullParser.WIKIPEDIA_BASE);
+  public final AnchorPullParser unit2 = new AnchorPullParser();
 
   @Test
   public void can_parse_valid_wiki_element() {

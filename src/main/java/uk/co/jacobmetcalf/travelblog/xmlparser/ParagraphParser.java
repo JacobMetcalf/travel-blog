@@ -1,6 +1,6 @@
 package uk.co.jacobmetcalf.travelblog.xmlparser;
 
-import static uk.co.jacobmetcalf.travelblog.xmlparser.AnchorParser.WIKIPEDIA_BASE;
+import static uk.co.jacobmetcalf.travelblog.xmlparser.AnchorPullParser.WIKIPEDIA_BASE;
 
 import com.google.common.base.Preconditions;
 import javax.xml.stream.XMLEventReader;
@@ -11,7 +11,6 @@ import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph.Builder;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableText;
 import uk.co.jacobmetcalf.travelblog.model.Locatable;
-import uk.co.jacobmetcalf.travelblog.model.Location;
 import uk.co.jacobmetcalf.travelblog.model.Paragraph;
 
 /**
@@ -20,8 +19,8 @@ import uk.co.jacobmetcalf.travelblog.model.Paragraph;
 public class ParagraphParser implements ElementPullParser<Paragraph> {
 
   private final ImageParser imageParser = new ImageParser();
-  private final AnchorParser wikiParser = new AnchorParser(ElementToken.WIKI, WIKIPEDIA_BASE);
-  private final AnchorParser plainAnchorParser = new AnchorParser();
+  private final AnchorPullParser wikiParser = new AnchorPullParser(ElementToken.WIKI, WIKIPEDIA_BASE);
+  private final AnchorPullParser plainAnchorParser = new AnchorPullParser();
   private final LocationParser locationParser = new LocationParser();
 
   @Override

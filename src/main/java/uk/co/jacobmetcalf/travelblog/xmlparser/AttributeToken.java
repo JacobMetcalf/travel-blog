@@ -18,6 +18,7 @@ public enum AttributeToken {
   TITLE,
   SRC,
   THUMB,
+  ICON,
   KML,
   ISIN;
 

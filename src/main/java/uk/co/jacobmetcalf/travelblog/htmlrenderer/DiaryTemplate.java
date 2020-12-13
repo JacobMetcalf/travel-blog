@@ -54,16 +54,19 @@ public class DiaryTemplate {
   private final EntryTemplate entryTemplate = new EntryTemplate();
   private final ElementVisitor elementVisitor;
 
-  public DiaryTemplate(final Diary diary, final String googleApiKey,
-      final String amazonAssociatesKey, final ElementVisitor elementVisitor) {
+  public DiaryTemplate(final Diary diary,
+      final String googleApiKey,
+      final String amazonAssociatesKey,
+      final String linkedInId,
+      final ElementVisitor elementVisitor) {
     this.diary = diary;
     this.headerTemplate = new NavbarTemplate(diary);
-    this.footerTemplate = new FooterTemplate("jacobmetcalf");
+    this.footerTemplate = new FooterTemplate(linkedInId);
     this.mapTemplate = new MapTemplate(diary, googleApiKey);
     this.bookTemplate = new BookTemplate(diary.getBooks(), amazonAssociatesKey);
     this.elementVisitor = elementVisitor;
 
-    // TODO: Links to neighbouring diaries, slideshow dimensions
+    // TODO: Fix slideshow dimensions, move keys to properties and make more flexible
   }
 
   public void render() {
