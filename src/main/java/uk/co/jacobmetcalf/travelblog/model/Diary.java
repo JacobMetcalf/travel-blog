@@ -17,7 +17,6 @@ public abstract class Diary implements Locatable {
   public abstract String getFilename();
   public abstract String getThumb();
   public abstract List<Anchor> getNavigationAnchors();
-  public abstract Optional<String> getKml();
   public abstract List<Book> getBooks();
   public abstract Stream<EntryOrRoute> getEntriesAndRoutes();
 

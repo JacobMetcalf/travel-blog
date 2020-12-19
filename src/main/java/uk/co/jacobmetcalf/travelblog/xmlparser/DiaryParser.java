@@ -26,21 +26,24 @@ public class DiaryParser {
   private XMLEventReader xmlEventReader;
   private Location rootLocation = ImmutableLocation.builder().build();
   private final LocationParser locationParser = new LocationParser();
-  private final AnchorPullParser navigationParser = new AnchorPullParser( ElementToken.NAVIGATION, "");
+  private final AnchorPullParser navigationParser;
   private final BookPullParser bookParser = new BookPullParser();
-  private final ImmutableDiary.Builder diaryBuilder = ImmutableDiary.builder();
   private final StringPullParser stringPullParser = new StringPullParser();
 
   private final AttributeParser<ImmutableDiary.Builder> attributeParser =
       locationParser.addLocationAttributes(AttributeParser.<ImmutableDiary.Builder>builder()
           .withElementToken(ElementToken.DIARY)
           .put(AttributeToken.TITLE, (b, a) -> b.title(a.getValue()))
-          .put(AttributeToken.THUMB, (b, a) -> b.thumb(a.getValue()))
-          .put(AttributeToken.KML,   (b, a) -> b.kml(a.getValue())))
+          .put(AttributeToken.THUMB, (b, a) -> b.thumb(a.getValue())))
           .build();
+
+  public DiaryParser(final String canonicalUrl) {
+    this.navigationParser = new AnchorPullParser(ElementToken.NAVIGATION, canonicalUrl);
+  }
 
   public Diary parse(final String filename, final InputStream inputStream) throws XMLStreamException {
 
+    ImmutableDiary.Builder diaryBuilder = ImmutableDiary.builder();
     Preconditions.checkNotNull(inputStream, "Input stream cannot be null");
     diaryBuilder.filename(filename);
 
@@ -70,13 +73,29 @@ public class DiaryParser {
           false));
 
       return diaryBuilder.build();
-
+    } catch (XMLStreamException | IllegalStateException ex) {
+      throw wrapException(ex);
     } finally {
       xmlEventReader.close();
     }
   }
 
-  /**
+  private RuntimeException wrapException(final Exception ex) {
+    try {
+      // TODO wrap reader so we can get current location
+      if ((xmlEventReader != null) && (xmlEventReader.peek() != null)) {
+        throw new RuntimeException(ex.getMessage() + ", just before Line: "
+            + xmlEventReader.peek().getLocation().getLineNumber()
+            + ", Column: "
+            + xmlEventReader.peek().getLocation().getColumnNumber(), ex);
+      }
+      return new RuntimeException(ex);
+    } catch (XMLStreamException ex2) {
+      return new RuntimeException(ex);
+    }
+  }
+
+    /**
    * Iterator over the XML stream
    */
   private class EventIterator implements Iterator<EntryOrRoute> {
@@ -113,8 +132,8 @@ public class DiaryParser {
             throw new IllegalStateException("Unexpected element: " + peekEvent);
           }
         }
-      } catch (XMLStreamException ex) {
-        throw new RuntimeException("Could not parse as a diary", ex);
+      } catch (XMLStreamException | IllegalStateException ex) {
+        throw wrapException(ex);
       }
       return result;
     }

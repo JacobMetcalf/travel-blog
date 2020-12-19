@@ -24,8 +24,8 @@ public class NavbarTemplate {
             .text(diary.getTitle())
           .__()
           .ul().attrClass("nav justify-content-end")
-            .of(this::addKmlLink)
             .of(this::addSlideshowLink)
+            .of(this::addNavigationAnchors)
             .of(this::addHomeLink)
           .__()
         .__();
@@ -44,18 +44,20 @@ public class NavbarTemplate {
     // @formatter:on
   }
 
-  private <T extends Element<T,?>> Ul<T> addKmlLink(final Ul<T> parent) {
-    return  diary.getKml().map(
-      // @formatter:off
-      k -> parent
-        .li().attrClass("nav-item")
-          .a().attrClass("nav-link px-2").attrHref(k)
-            .i().attrClass("fa fa-google").attrTitle("View this trip in Google Earth")
+  private <T extends Element<T,?>> Ul<T> addNavigationAnchors(final Ul<T> parent) {
+    diary.getNavigationAnchors().forEach(
+        // @formatter:off
+        a -> parent
+            .li().attrClass("nav-item")
+            .a().attrClass("nav-link px-2").attrHref(a.getRef())
+            .i().attrClass("fa fa-" + a.getIcon().orElse("question"))
+              .attrTitle(a.getText())
             .__()
-          .__()
-        .__()
-      // @formatter:on
-      ).orElse(parent);
+            .__()
+            .__()
+        // @formatter:on
+    );
+    return parent;
   }
 
   private <T extends Element<T,?>> Ul<T> addSlideshowLink(final Ul<T> parent) {

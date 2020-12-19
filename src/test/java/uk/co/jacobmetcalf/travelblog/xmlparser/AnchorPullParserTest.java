@@ -12,6 +12,7 @@ public class AnchorPullParserTest {
 
   public final AnchorPullParser unit  = new AnchorPullParser(ElementToken.WIKI, AnchorPullParser.WIKIPEDIA_BASE);
   public final AnchorPullParser unit2 = new AnchorPullParser();
+  public final AnchorPullParser unit3 = new AnchorPullParser(ElementToken.NAVIGATION, "https://mytest.com");
 
   @Test
   public void can_parse_valid_wiki_element() {
@@ -41,6 +42,15 @@ public class AnchorPullParserTest {
 
     assertThat(actual.getRef(),  equalTo("https://en.wikipedia.org/wiki/Páramo"));
     assertThat(actual.getText(), equalTo("páramo"));
+  }
+
+  @Test
+  public void adds_slash_to_missing_base() {
+    String inputXml = "<navigation icon=\"globe\" ref=\"index.html\">Home</navigation>";
+    Anchor actual = TestHelper.tryParse(inputXml, unit3, TestData.QUITO);
+
+    assertThat(actual.getRef(),  equalTo("https://mytest.com/index.html"));
+    assertThat(actual.getText(), equalTo("Home"));
   }
 
   @Test

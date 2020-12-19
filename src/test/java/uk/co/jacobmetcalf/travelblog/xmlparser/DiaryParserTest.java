@@ -16,8 +16,8 @@ public class DiaryParserTest {
 
   public static final String HEADER = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n";
   public static final String DIARY_ELEMENT = "<diary country=\"Ecuador\" title=\"Ecuador: Another Inca trail and searching for bears in the cloud forest\">\n";
-  public static final String SUMMARY_ELEMENT = "  <summary latitude=\"-1.7\" longitude=\"-78.7\" zoom=\"7\" kml=\"ecuador.kml\" thumb=\"ecuador-thumb.jpg\">\n";
-  private final DiaryParser unit = new DiaryParser();
+  public static final String SUMMARY_ELEMENT = "  <summary latitude=\"-1.7\" longitude=\"-78.7\" zoom=\"7\" thumb=\"ecuador-thumb.jpg\">\n";
+  private final DiaryParser unit = new DiaryParser("https://www.example.com");
 
   @Test
   public void parse_example_file() throws XMLStreamException, IOException {
@@ -34,7 +34,8 @@ public class DiaryParserTest {
         + "</diary>\n";
 
     Diary actual = tryParse(inputXml);
-    assertThat(actual.getKml().orElseThrow(), equalTo("ecuador.kml"));
+    assertThat(actual.getTitle(), equalTo("Ecuador: Another Inca trail and searching "
+        + "for bears in the cloud forest"));
     assertThat(actual.getSummary(), equalTo(Optional.empty()));
   }
 
@@ -47,7 +48,8 @@ public class DiaryParserTest {
         + "</diary>\n";
 
     Diary actual = tryParse(inputXml);
-    assertThat(actual.getKml().orElseThrow(), equalTo("ecuador.kml"));
+    assertThat(actual.getTitle(), equalTo("Ecuador: Another Inca trail and searching "
+        + "for bears in the cloud forest"));
     assertThat(actual.getSummary().orElseThrow(), equalTo("Some summary"));
   }
 

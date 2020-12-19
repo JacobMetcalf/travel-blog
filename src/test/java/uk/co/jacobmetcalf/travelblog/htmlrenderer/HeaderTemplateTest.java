@@ -4,6 +4,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
+import uk.co.jacobmetcalf.travelblog.model.ImmutableAnchor;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableDiary;
 import uk.co.jacobmetcalf.travelblog.model.TestData;
 
@@ -12,7 +13,7 @@ public class HeaderTemplateTest {
 
 
   @Test
-  public void adds_header_without_kml() {
+  public void adds_header_without_nav_links() {
 
     // Just check dynamic elements.
     String actualHtml = TestHelper.renderInDiv(d -> {
@@ -22,9 +23,12 @@ public class HeaderTemplateTest {
   }
 
   @Test
-  public void adds_header_with_kml() {
+  public void adds_header_with_nav_link() {
     final Diary diary = ImmutableDiary.builder().from(TestData.DIARY_NO_ENTRIES)
-        .kml("test.kml").build();
+        .addNavigationAnchors(
+            ImmutableAnchor.builder()
+                .icon("globe").text("Test nav link").ref("../test.kml").build())
+        .build();
 
     // Just check dynamic elements.
     String actualHtml = TestHelper.renderInDiv(d -> {

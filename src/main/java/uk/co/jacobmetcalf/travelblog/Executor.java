@@ -21,19 +21,30 @@ import uk.co.jacobmetcalf.travelblog.model.Diary;
 import uk.co.jacobmetcalf.travelblog.xmlparser.DiaryParser;
 
 public class Executor {
+
+  public static final String DOCTYPE_HTML = "<!DOCTYPE html>";
+  private static final Logger logger = LoggerFactory.getLogger(Executor.class.getName());
+
+  private final FileNamer fileNamer = new FileNamer();
+
   private List<String> directories = new ArrayList<>();
   private String googleKey;
   private String amazonKey;
   private String linkedInId;
+  private String canonicalUrl;
   private boolean recursive = false;
   private boolean help = false;
-  private final DiaryParser diaryParser = new DiaryParser();
 
-  private static final Logger logger = LoggerFactory.getLogger(Executor.class.getName());
 
   @Parameter(description = "List of directories", required = true)
   public void setDirectories(List<String> directories) {
     this.directories = directories;
+  }
+
+  @Parameter(names = {"--url", "-u"},
+      description = "Canonical (i.e. the one you want Google to index) url", required = true)
+  public void setCanonicalUrl(String canonicalUrl) {
+    this.canonicalUrl = canonicalUrl;
   }
 
   @Parameter(names = {"--googlekey", "-g"}, description = "Google api key", required = true)
@@ -85,16 +96,19 @@ public class Executor {
   }
 
   private void processXmlFile(final Path inputPath){
+    Path outputPath = fileNamer.toHtmlFile(inputPath);
     logger.info("Processing: " + inputPath);
-    Path outputPath = Paths.get(FilenameUtils.removeExtension(inputPath.toString()) + "-new.html");
 
     try (InputStream inputStream = Files.newInputStream(inputPath);
         OutputStream outputStream = Files.newOutputStream(outputPath);
         PrintStream printStream = new PrintStream(outputStream)) {
 
+      DiaryParser diaryParser = new DiaryParser(canonicalUrl);
       Diary diary = diaryParser.parse(inputPath.getFileName().toString(), inputStream);
+
+      printStream.println(DOCTYPE_HTML);
       SimpleElementWriter writer = new SimpleElementWriter(printStream);
-      new DiaryTemplate(diary, googleKey, amazonKey, linkedInId, writer).render();
+      new DiaryTemplate(diary, googleKey, amazonKey, linkedInId, canonicalUrl, writer).render();
 
     } catch (IOException | XMLStreamException ex) {
       throw new RuntimeException("Could not process file:" + inputPath, ex);

@@ -30,11 +30,11 @@ public class AnchorPullParser
 
   public AnchorPullParser(final ElementToken elementToken, final String base) {
     this.elementToken = elementToken;
-    this.base = base;
+    this.base = addTrailingSlash(base);
     this.attributeParser = AttributeParser.<ImmutableAnchor.Builder>builder()
           .withElementToken(ElementToken.A)
-          .put(AttributeToken.REF, (b, a) -> b.ref(base + a.getValue())) // Should deprecate
-          .put(AttributeToken.HREF, (b, a) -> b.ref(base + a.getValue()))
+          .put(AttributeToken.REF, (b, a) -> b.ref(this.base + a.getValue())) // Should deprecate
+          .put(AttributeToken.HREF, (b, a) -> b.ref(this.base + a.getValue()))
           .put(AttributeToken.ICON, (b, a) -> b.icon(a.getValue()))
           .build();
   }
@@ -73,5 +73,12 @@ public class AnchorPullParser
       ElementToken.checkEndElement(xmlEventReader.nextEvent(), elementToken);
     }
     return listBuilder.build();
+  }
+
+  private String addTrailingSlash(final String url) {
+    if ((url.length() > 0 ) && !url.endsWith("/")) {
+      return url + "/";
+    }
+    return url;
   }
 }

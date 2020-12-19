@@ -47,6 +47,7 @@ public class DiaryTemplate {
       "https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js";
 
   private final Diary diary;
+  private final String canonicalUrl;
   private final NavbarTemplate headerTemplate;
   private final FooterTemplate footerTemplate;
   private final MapTemplate mapTemplate;
@@ -58,15 +59,17 @@ public class DiaryTemplate {
       final String googleApiKey,
       final String amazonAssociatesKey,
       final String linkedInId,
+      final String canonicalUrl,
       final ElementVisitor elementVisitor) {
     this.diary = diary;
+    this.canonicalUrl = canonicalUrl;
     this.headerTemplate = new NavbarTemplate(diary);
     this.footerTemplate = new FooterTemplate(linkedInId);
     this.mapTemplate = new MapTemplate(diary, googleApiKey);
     this.bookTemplate = new BookTemplate(diary.getBooks(), amazonAssociatesKey);
     this.elementVisitor = elementVisitor;
 
-    // TODO: Fix slideshow dimensions, move keys to properties and make more flexible
+    // TODO: Move keys to properties and make more flexible
   }
 
   public void render() {
@@ -130,7 +133,7 @@ public class DiaryTemplate {
   private String getCanonicalPath() {
     String[] parts = diary.getFilename().split("\\.");
     Preconditions.checkArgument(parts.length == 2, "Path cannot have more than one dot in");
-    return "https://www.jacobmetcalf.co.uk/" + parts[0] + ".html";
+    return canonicalUrl + "/" + parts[0] + ".html";
   }
 
   private class EntryOrRouteVisitor<T extends Element<T,?>> implements EntryOrRoute.Visitor {

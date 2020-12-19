@@ -19,7 +19,6 @@ public enum AttributeToken {
   SRC,
   THUMB,
   ICON,
-  KML,
   ISIN;
 
   public static AttributeToken fromAttributeName(final Attribute attribute) {
