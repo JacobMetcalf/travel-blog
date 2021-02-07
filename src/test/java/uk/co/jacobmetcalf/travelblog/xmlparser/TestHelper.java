@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.XMLEvent;
 import org.junit.jupiter.api.Assertions;
 import uk.co.jacobmetcalf.travelblog.model.Location;
 
@@ -17,7 +18,10 @@ public class TestHelper {
       // Skip start document
       Assertions.assertTrue(xmlEventReader.nextEvent().isStartDocument());
 
-      return unit.pullElement(xmlEventReader, parentLocation);
+      E result = unit.pullElement(xmlEventReader, parentLocation);
+      Assertions.assertTrue(xmlEventReader.peek().isEndDocument()); // Check all consumed
+      return result;
+
 
     } catch (XMLStreamException | IOException ex) {
       throw new RuntimeException("Could not read xml", ex);

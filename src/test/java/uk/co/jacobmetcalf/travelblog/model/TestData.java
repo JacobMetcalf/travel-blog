@@ -74,6 +74,17 @@ public final class TestData {
       .entriesAndRoutes(Stream.empty())
       .build();
 
+  public static final Diary DIARY_WITH_NAVIGATION = ImmutableDiary.builder()
+      .from(QUITO)
+      .title("Test title")
+      .thumb("test.gif")
+      .filename("test.xml")
+      .addNavigationAnchors(
+          ImmutableAnchor.builder().icon("backward").text("Prev").ref("https://forwards.com").build(),
+          ImmutableAnchor.builder().icon("forward").text("Next").ref("https://backwards.com").build())
+      .entriesAndRoutes(Stream.empty())
+      .build();
+
   public static final Book BOOK_1 = ImmutableBook.builder()
       .title("Test book")
       .isin("123ABC")

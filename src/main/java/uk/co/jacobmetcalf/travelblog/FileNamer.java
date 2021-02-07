@@ -1,7 +1,6 @@
 package uk.co.jacobmetcalf.travelblog;
 
 import java.nio.file.Path;
-import java.util.Locale;
 import org.apache.commons.io.FilenameUtils;
 
 /**

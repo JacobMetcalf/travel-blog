@@ -10,10 +10,12 @@ import uk.co.jacobmetcalf.travelblog.model.Diary;
  */
 public class NavbarTemplate {
 
+  private final NavigationAnchorTemplate navigationAnchorTemplate;
   private final Diary diary;
 
   public NavbarTemplate(Diary diary) {
     this.diary = diary;
+    this.navigationAnchorTemplate = new NavigationAnchorTemplate(diary.getNavigationAnchors());
   }
 
   public <T extends Element<T,?>> Div<T> add(final Div<T> parent) {
@@ -25,7 +27,7 @@ public class NavbarTemplate {
           .__()
           .ul().attrClass("nav justify-content-end")
             .of(this::addSlideshowLink)
-            .of(this::addNavigationAnchors)
+            .of(navigationAnchorTemplate::add)
             .of(this::addHomeLink)
           .__()
         .__();
@@ -42,22 +44,6 @@ public class NavbarTemplate {
           .__()
         .__();
     // @formatter:on
-  }
-
-  private <T extends Element<T,?>> Ul<T> addNavigationAnchors(final Ul<T> parent) {
-    diary.getNavigationAnchors().forEach(
-        // @formatter:off
-        a -> parent
-            .li().attrClass("nav-item")
-            .a().attrClass("nav-link px-2").attrHref(a.getRef())
-            .i().attrClass("fa fa-" + a.getIcon().orElse("question"))
-              .attrTitle(a.getText())
-            .__()
-            .__()
-            .__()
-        // @formatter:on
-    );
-    return parent;
   }
 
   private <T extends Element<T,?>> Ul<T> addSlideshowLink(final Ul<T> parent) {

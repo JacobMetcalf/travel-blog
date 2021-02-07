@@ -8,12 +8,20 @@ import org.xmlet.htmlapifaster.Div;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.P;
 import org.xmlet.htmlapifaster.Script;
+import org.xmlet.htmlapifaster.Ul;
 
 public class TestHelper {
   public static <Z extends Element<Z,?>> String renderInDiv(final Consumer<Div<Z>> unitAdd) {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     SimpleElementWriter writer = new SimpleElementWriter(new PrintStream(out));
     new Div<Z>(writer).of(unitAdd).__();
+    return out.toString();
+  }
+
+  public static <Z extends Element<Z,?>> String renderInUl(final Consumer<Ul<Z>> unitAdd) {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    SimpleElementWriter writer = new SimpleElementWriter(new PrintStream(out));
+    new Ul<Z>(writer).of(unitAdd).__();
     return out.toString();
   }
 

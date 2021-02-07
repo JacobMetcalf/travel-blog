@@ -64,7 +64,7 @@ public class DiaryTemplate {
     this.diary = diary;
     this.canonicalUrl = canonicalUrl;
     this.headerTemplate = new NavbarTemplate(diary);
-    this.footerTemplate = new FooterTemplate(linkedInId);
+    this.footerTemplate = new FooterTemplate(diary, linkedInId);
     this.mapTemplate = new MapTemplate(diary, googleApiKey);
     this.bookTemplate = new BookTemplate(diary.getBooks(), amazonAssociatesKey);
     this.elementVisitor = elementVisitor;

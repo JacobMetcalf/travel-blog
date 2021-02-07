@@ -61,6 +61,33 @@ public class AnchorPullParserTest {
   }
 
   @Test
+  public void throws_if_blank() {
+    String inputXml = "";
+    Assertions.assertThrows(IllegalArgumentException.class,
+        () -> TestHelper.tryParse(inputXml, unit, TestData.QUITO));
+  }
+
+  @Test
+  public void throws_if_empty() {
+    String inputXml = "<wiki ref=\"abc\"/>";
+    Assertions.assertThrows(IllegalArgumentException.class,
+        () -> TestHelper.tryParse(inputXml, unit, TestData.QUITO));
+  }
+
+//  @Test
+//  public void throws_if_mismatch() {
+//    String inputXml = "<wiki ref=\"Test\">Text</a>";
+//    Assertions.assertThrows(IllegalStateException.class,
+//        () -> TestHelper.tryParse(inputXml, unit, TestData.QUITO));
+//  }
+
+  public void throws_if_element_left_open() {
+    String inputXml = "<wiki ref=\"Test\">Open";
+    Assertions.assertThrows(IllegalStateException.class,
+        () -> TestHelper.tryParse(inputXml, unit, TestData.QUITO));
+  }
+
+  @Test
   public void throws_if_missing_ref() {
     String inputXml = "<wiki>Invalid</wiki>";
     Assertions.assertThrows(IllegalStateException.class,

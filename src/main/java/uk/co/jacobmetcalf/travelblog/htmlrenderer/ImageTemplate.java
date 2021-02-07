@@ -40,7 +40,7 @@ public class ImageTemplate {
     return f -> f.attrClass(switch (position) {
       case LEFT -> "figure float-md-left pr-3 clear-left";
       case RIGHT -> "figure float-md-right pl-3 clear-right";
-      case NONE -> "figure p-r-1";
+      case NONE -> "figure pr-3";
     });
   }
 }

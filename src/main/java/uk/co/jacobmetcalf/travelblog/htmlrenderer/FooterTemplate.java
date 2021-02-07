@@ -4,6 +4,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.xmlet.htmlapifaster.Body;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.Ul;
+import uk.co.jacobmetcalf.travelblog.model.Diary;
 
 /**
  * Template which renders the footer of the diary page, with various links.
@@ -11,9 +12,11 @@ import org.xmlet.htmlapifaster.Ul;
 public class FooterTemplate {
 
   private final String linkedInId;
+  private final NavigationAnchorTemplate navigationAnchorTemplate;
 
-  public FooterTemplate(@Nullable final String linkedInId) {
+  public FooterTemplate(final Diary diary, @Nullable final String linkedInId) {
     this.linkedInId = linkedInId;
+    this.navigationAnchorTemplate = new NavigationAnchorTemplate(diary.getNavigationAnchors());
   }
 
   public <T extends Element<T,?>> Body<T> add(final Body<T> parent) {
@@ -25,6 +28,7 @@ public class FooterTemplate {
               .div().attrClass("navbar-brand").__()
               .ul().attrClass("nav justify-content-end")
                 .of(this::addLinkedInIcon)
+                .of(navigationAnchorTemplate::add)
               .__()
             .__()
           .__()

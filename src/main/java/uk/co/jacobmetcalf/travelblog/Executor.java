@@ -5,16 +5,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
-import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.co.jacobmetcalf.travelblog.htmlrenderer.DiaryTemplate;
 import uk.co.jacobmetcalf.travelblog.htmlrenderer.SimpleElementWriter;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
@@ -81,18 +81,18 @@ public class Executor {
   }
 
   private void processPath(final String directory) {
-    try (Stream<Path> paths = Files.walk(Paths.get(directory),
-        recursive ? Integer.MAX_VALUE : 1)) {
-      paths.filter(this::isXmlFile)
-          .forEach(this::processXmlFile);
+    int depth = recursive ? Integer.MAX_VALUE : 1;
+    try (Stream<Path> paths = Files.find(Paths.get(directory), depth, this::isXmlFile)) {
+          paths.forEach(this::processXmlFile);
 
     } catch (IOException ex) {
       throw new RuntimeException("Could not open directory: " + directory, ex);
     }
   }
 
-  private boolean isXmlFile(final Path path) {
-    return path.getFileName().toString().toLowerCase().endsWith(".xml");
+  private boolean isXmlFile(final Path path, final BasicFileAttributes attributes) {
+    return path.getFileName().toString().toLowerCase().endsWith(".xml") &&
+        !path.getFileName().toString().equalsIgnoreCase("sitemap.xml");
   }
 
   private void processXmlFile(final Path inputPath){

@@ -24,7 +24,6 @@ public class LocationTemplate {
     E result = parent
         .a().attrId(locatable.getLocation().orElseThrow()).__()
         .a()
-          .attrTarget("_new")
           .of(ifNoWikiLinkToMap(locatable))
           .of(a -> a.text(fullyQualified ?
               formatLocatable(locatable) : locatable.getLocation().get()))
@@ -37,7 +36,8 @@ public class LocationTemplate {
 
   private <E extends Element<E,?>> Consumer<A<E>> ifNoWikiLinkToMap(final Locatable locatable) {
     return a -> locatable.getWiki()
-        .ifPresentOrElse(a::attrHref, () -> centreOnMap(a, locatable));
+        .ifPresentOrElse(l -> a.attrTarget("_new").attrHref(l),
+            () -> centreOnMap(a, locatable));
   }
 
   private <E extends PhrasingContentChoice<E,?>> void ifWikiAddGlobeIcon(final E parent, final Locatable locatable) {

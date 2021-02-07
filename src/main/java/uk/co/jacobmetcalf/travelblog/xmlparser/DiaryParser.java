@@ -12,8 +12,7 @@ import javax.xml.stream.events.XMLEvent;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
 import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableDiary;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
-import uk.co.jacobmetcalf.travelblog.model.Location;
+import uk.co.jacobmetcalf.travelblog.model.Locatable;
 
 /**
  * Pull parses an XML document into an ordered stream of Entry objects.
@@ -24,14 +23,13 @@ import uk.co.jacobmetcalf.travelblog.model.Location;
 public class DiaryParser {
 
   private XMLEventReader xmlEventReader;
-  private Location rootLocation = ImmutableLocation.builder().build();
-  private final LocationParser locationParser = new LocationParser();
+  private Locatable rootLocatable;
   private final AnchorPullParser navigationParser;
   private final BookPullParser bookParser = new BookPullParser();
   private final StringPullParser stringPullParser = new StringPullParser();
 
   private final AttributeParser<ImmutableDiary.Builder> attributeParser =
-      locationParser.addLocationAttributes(AttributeParser.<ImmutableDiary.Builder>builder()
+      new LocationParser().addLocationAttributes(AttributeParser.<ImmutableDiary.Builder>builder()
           .withElementToken(ElementToken.DIARY)
           .put(AttributeToken.TITLE, (b, a) -> b.title(a.getValue()))
           .put(AttributeToken.THUMB, (b, a) -> b.thumb(a.getValue())))
@@ -72,8 +70,11 @@ public class DiaryParser {
           iterator, Spliterator.ORDERED | Spliterator.IMMUTABLE | Spliterator.NONNULL),
           false));
 
-      return diaryBuilder.build();
-    } catch (XMLStreamException | IllegalStateException ex) {
+      Diary result = diaryBuilder.build();
+      this.rootLocatable = result;
+      iterator.next();
+      return result;
+    } catch (XMLStreamException | IllegalStateException | IllegalArgumentException ex) {
       throw wrapException(ex);
     } finally {
       xmlEventReader.close();
@@ -84,10 +85,12 @@ public class DiaryParser {
     try {
       // TODO wrap reader so we can get current location
       if ((xmlEventReader != null) && (xmlEventReader.peek() != null)) {
-        throw new RuntimeException(ex.getMessage() + ", just before Line: "
+        throw new RuntimeException("Before line: "
             + xmlEventReader.peek().getLocation().getLineNumber()
-            + ", Column: "
-            + xmlEventReader.peek().getLocation().getColumnNumber(), ex);
+            + ", col: "
+            + xmlEventReader.peek().getLocation().getColumnNumber()
+            + ": "
+            + ex.getMessage(), ex);
       }
       return new RuntimeException(ex);
     } catch (XMLStreamException ex2) {
@@ -101,10 +104,6 @@ public class DiaryParser {
   private class EventIterator implements Iterator<EntryOrRoute> {
 
     private EntryOrRoute nextEntry;
-
-    public EventIterator() {
-      next(); // Peek ahead
-    }
 
     @Override
     public boolean hasNext() {
@@ -125,14 +124,14 @@ public class DiaryParser {
             // Close of the diary element sets hasNext() to false
             ElementToken.checkEndElement(peekEvent, ElementToken.DIARY);
           } else if (token == ElementToken.ENTRY) {
-            nextEntry = new EntryParser().pullElement(xmlEventReader, rootLocation);
+            nextEntry = new EntryParser().pullElement(xmlEventReader, rootLocatable);
           } else if (token == ElementToken.ROUTE) {
-            nextEntry = new RouteParser().pullElement(xmlEventReader, rootLocation);
+            nextEntry = new RouteParser().pullElement(xmlEventReader, rootLocatable);
           } else {
             throw new IllegalStateException("Unexpected element: " + peekEvent);
           }
         }
-      } catch (XMLStreamException | IllegalStateException ex) {
+      } catch (XMLStreamException | IllegalStateException | IllegalArgumentException ex) {
         throw wrapException(ex);
       }
       return result;
