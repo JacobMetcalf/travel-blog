@@ -70,7 +70,7 @@ public class AnchorPullParserTest {
   @Test
   public void throws_if_empty() {
     String inputXml = "<wiki ref=\"abc\"/>";
-    Assertions.assertThrows(IllegalArgumentException.class,
+    Assertions.assertThrows(IllegalStateException.class,
         () -> TestHelper.tryParse(inputXml, unit, TestData.QUITO));
   }
 

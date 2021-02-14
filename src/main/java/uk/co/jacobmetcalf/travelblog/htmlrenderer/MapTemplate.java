@@ -6,6 +6,8 @@ import org.xmlet.htmlapifaster.Div;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.EnumTypeScriptType;
 import org.xmlet.htmlapifaster.Script;
+import uk.co.jacobmetcalf.travelblog.model.Properties;
+import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 import uk.co.jacobmetcalf.travelblog.model.Locatable;
 import uk.co.jacobmetcalf.travelblog.model.Route;
 
@@ -18,10 +20,10 @@ public class MapTemplate {
   private final Locatable centre;
   private final String apiKey;
 
-  public MapTemplate(final Locatable centre, final String apiKey) {
+  public MapTemplate(final Locatable centre, final Properties properties) {
     Preconditions.checkArgument(centre.hasCoords(), "Map centre must have coordinates");
     this.centre = centre;
-    this.apiKey = apiKey;
+    this.apiKey = properties.get(Key.GOOGLE_API_KEY).orElseThrow();
   }
 
   /**

@@ -13,6 +13,8 @@ import uk.co.jacobmetcalf.travelblog.model.Diary;
 import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableDiary;
 import uk.co.jacobmetcalf.travelblog.model.Locatable;
+import uk.co.jacobmetcalf.travelblog.model.Properties;
+import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 
 /**
  * Pull parses an XML document into an ordered stream of Entry objects.
@@ -35,8 +37,9 @@ public class DiaryParser {
           .put(AttributeToken.THUMB, (b, a) -> b.thumb(a.getValue())))
           .build();
 
-  public DiaryParser(final String canonicalUrl) {
-    this.navigationParser = new AnchorPullParser(ElementToken.NAVIGATION, canonicalUrl);
+  public DiaryParser(final Properties properties) {
+    this.navigationParser = new AnchorPullParser(ElementToken.NAVIGATION,
+        properties.get(Key.CANONICAL_URL).orElseThrow());
   }
 
   public Diary parse(final String filename, final InputStream inputStream) throws XMLStreamException {

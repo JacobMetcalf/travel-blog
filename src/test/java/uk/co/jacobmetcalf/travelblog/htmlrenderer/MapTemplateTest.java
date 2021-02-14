@@ -5,11 +5,14 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
 import org.junit.jupiter.api.Test;
+import uk.co.jacobmetcalf.travelblog.model.Properties;
+import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 import uk.co.jacobmetcalf.travelblog.model.TestData;
 
 public class MapTemplateTest {
 
-  private final MapTemplate unit = new MapTemplate(TestData.QUITO, "my-api-key");
+  private final MapTemplate unit = new MapTemplate(TestData.QUITO,
+      Properties.of(Key.GOOGLE_API_KEY, "my-api-key"));
 
   @Test
   public void can_render_route() {

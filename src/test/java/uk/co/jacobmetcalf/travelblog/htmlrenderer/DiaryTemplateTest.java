@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableDiary;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableEntryOrRoute;
+import uk.co.jacobmetcalf.travelblog.model.Properties;
+import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 import uk.co.jacobmetcalf.travelblog.model.TestData;
 
 public class DiaryTemplateTest {
@@ -26,8 +28,8 @@ public class DiaryTemplateTest {
     SimpleElementWriter writer = new SimpleElementWriter(new PrintStream(out));
 
     DiaryTemplate unit = new DiaryTemplate(diaryOneEntry,
-      "test", "test", "test",
-        "http://test.com", writer);
+        Properties.of(Key.GOOGLE_API_KEY, "my-api-key",
+            Key.CANONICAL_URL, "https://mysite.com"), writer);
 
     unit.render();
     String actualHtml = out.toString();

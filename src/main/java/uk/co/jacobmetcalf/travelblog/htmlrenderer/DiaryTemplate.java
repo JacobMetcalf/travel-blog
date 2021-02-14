@@ -11,6 +11,8 @@ import org.xmlet.htmlapifaster.EnumRelType;
 import org.xmlet.htmlapifaster.EnumTypeContentType;
 import org.xmlet.htmlapifaster.EnumTypeScriptType;
 import org.xmlet.htmlapifaster.Html;
+import uk.co.jacobmetcalf.travelblog.model.Properties;
+import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
 import uk.co.jacobmetcalf.travelblog.model.Entry;
 import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
@@ -47,7 +49,7 @@ public class DiaryTemplate {
       "https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js";
 
   private final Diary diary;
-  private final String canonicalUrl;
+  private final Properties properties;
   private final NavbarTemplate headerTemplate;
   private final FooterTemplate footerTemplate;
   private final MapTemplate mapTemplate;
@@ -56,20 +58,17 @@ public class DiaryTemplate {
   private final ElementVisitor elementVisitor;
 
   public DiaryTemplate(final Diary diary,
-      final String googleApiKey,
-      final String amazonAssociatesKey,
-      final String linkedInId,
-      final String canonicalUrl,
+      final Properties properties,
       final ElementVisitor elementVisitor) {
     this.diary = diary;
-    this.canonicalUrl = canonicalUrl;
+    this.properties = properties;
     this.headerTemplate = new NavbarTemplate(diary);
-    this.footerTemplate = new FooterTemplate(diary, linkedInId);
-    this.mapTemplate = new MapTemplate(diary, googleApiKey);
-    this.bookTemplate = new BookTemplate(diary.getBooks(), amazonAssociatesKey);
+    this.footerTemplate = new FooterTemplate(diary, properties);
+    this.mapTemplate = new MapTemplate(diary, properties);
+    this.bookTemplate = new BookTemplate(diary.getBooks(), properties);
     this.elementVisitor = elementVisitor;
 
-    // TODO: Move keys to properties and make more flexible
+    // TODO: Add twitter and facebook
   }
 
   public void render() {
@@ -105,15 +104,25 @@ public class DiaryTemplate {
   }
 
   /**
-   * Add the divider in which the map will be drawn
+   * Add the divider in which the map will be drawn. Book element is optional but
+   * requires the
    */
   public <T extends Element<T,?>> Div<T> addMapDiv(final Div<T> parent) {
     // @formatter:off
-    return parent
-        .div().attrClass("clearfix row ml-1 py-1")
-        .div().attrId("map").attrClass("col-lg-11 mb-1").__()
-        .div().attrId("books").attrClass("col-lg-1").of(bookTemplate::add).__()
-        .__();
+    if (bookTemplate.hasBooks()) {
+      return parent
+          .div().attrClass("clearfix row ml-1 py-1")
+            .div().attrId("map").attrClass("col-lg-11 mb-1").__()
+            .div().attrId("books").attrClass("col-lg-1")
+              .of(bookTemplate::add)
+            .__()
+          .__();
+      } else {
+        return parent
+          .div().attrClass("clearfix row ml-1 py-1")
+            .div().attrId("map").attrClass("col-lg-11 mb-1").__()
+          .__();
+    }
     // @formatter:on
   }
 
@@ -133,7 +142,7 @@ public class DiaryTemplate {
   private String getCanonicalPath() {
     String[] parts = diary.getFilename().split("\\.");
     Preconditions.checkArgument(parts.length == 2, "Path cannot have more than one dot in");
-    return canonicalUrl + "/" + parts[0] + ".html";
+    return properties.get(Key.CANONICAL_URL).orElseThrow() + "/" + parts[0] + ".html";
   }
 
   private class EntryOrRouteVisitor<T extends Element<T,?>> implements EntryOrRoute.Visitor {

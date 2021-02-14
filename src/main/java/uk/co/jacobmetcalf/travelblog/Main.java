@@ -13,6 +13,8 @@ public class Main {
 
     if (executor.isHelp()) {
       jc.usage();
+      jc.getConsole().println("Tip: for ease of use put the arguments in a file with key and value "
+          + "on alternating lines then just call with: @:\\dir\\my.properties ");
     } else {
       executor.execute();
     }

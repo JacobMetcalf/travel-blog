@@ -16,6 +16,9 @@ import javax.xml.stream.XMLStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.jacobmetcalf.travelblog.htmlrenderer.DiaryTemplate;
+import uk.co.jacobmetcalf.travelblog.htmlrenderer.ImmutableProperties;
+import uk.co.jacobmetcalf.travelblog.model.Properties;
+import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 import uk.co.jacobmetcalf.travelblog.htmlrenderer.SimpleElementWriter;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
 import uk.co.jacobmetcalf.travelblog.xmlparser.DiaryParser;
@@ -28,10 +31,7 @@ public class Executor {
   private final FileNamer fileNamer = new FileNamer();
 
   private List<String> directories = new ArrayList<>();
-  private String googleKey;
-  private String amazonKey;
-  private String linkedInId;
-  private String canonicalUrl;
+  private ImmutableProperties.Builder properties = ImmutableProperties.builder();
   private boolean recursive = false;
   private boolean help = false;
 
@@ -44,22 +44,37 @@ public class Executor {
   @Parameter(names = {"--url", "-u"},
       description = "Canonical (i.e. the one you want Google to index) url", required = true)
   public void setCanonicalUrl(String canonicalUrl) {
-    this.canonicalUrl = canonicalUrl;
+    properties.putValue(Key.CANONICAL_URL, canonicalUrl);
   }
 
-  @Parameter(names = {"--googlekey", "-g"}, description = "Google api key", required = true)
+  @Parameter(names = {"--googlekey", "-g"}, description = "Google api key for maps (mandatory)", required = true)
   public void setGoogleKey(String googleKey) {
-    this.googleKey = googleKey;
+    properties.putValue(Key.GOOGLE_API_KEY, googleKey);
   }
 
-  @Parameter(names = {"--amazonkey", "-a"}, description = "Amazon associates key")
+  @Parameter(names = {"--amazonkey", "-a"}, description = "Amazon associates key for selling books")
   public void setAmazonKey(String amazonKey) {
-    this.amazonKey = amazonKey;
+    properties.putValue(Key.AMAZON_ASSOCIATES_ID, amazonKey);
   }
 
   @Parameter(names = {"--linkedin", "-l"}, description = "Linked in id")
-  public void setLinkedInId(String linkedInId) {
-    this.linkedInId = linkedInId;
+  public void setLinkedInId(String linkedIn) {
+    properties.putValue(Key.LINKED_IN, linkedIn);
+  }
+
+  @Parameter(names = {"--facebook", "-f"}, description = "Facebook id")
+  public void setFacebook(String facebook) {
+    properties.putValue(Key.FACEBOOK, facebook);
+  }
+
+  @Parameter(names = {"--twitter", "-t"}, description = "Twitter id")
+  public void setTwitter(String twitter) {
+    properties.putValue(Key.TWITTER, twitter);
+  }
+
+  @Parameter(names = {"--github", "-b"}, description = "GitHub account")
+  public void setGitHub(String gitHub) {
+    properties.putValue(Key.GITHUB, gitHub);
   }
 
   @Parameter(names = {"--recursive", "-r"}, description = "Whether to recursively search sub-directories of the given directory")
@@ -103,12 +118,13 @@ public class Executor {
         OutputStream outputStream = Files.newOutputStream(outputPath);
         PrintStream printStream = new PrintStream(outputStream)) {
 
-      DiaryParser diaryParser = new DiaryParser(canonicalUrl);
+      Properties properties = this.properties.build();
+      DiaryParser diaryParser = new DiaryParser(properties);
       Diary diary = diaryParser.parse(inputPath.getFileName().toString(), inputStream);
 
       printStream.println(DOCTYPE_HTML);
       SimpleElementWriter writer = new SimpleElementWriter(printStream);
-      new DiaryTemplate(diary, googleKey, amazonKey, linkedInId, canonicalUrl, writer).render();
+      new DiaryTemplate(diary, properties, writer).render();
 
     } catch (IOException | XMLStreamException ex) {
       throw new RuntimeException("Could not process file:" + inputPath, ex);
