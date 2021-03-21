@@ -16,7 +16,7 @@ import javax.xml.stream.XMLStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.jacobmetcalf.travelblog.htmlrenderer.DiaryTemplate;
-import uk.co.jacobmetcalf.travelblog.htmlrenderer.ImmutableProperties;
+import uk.co.jacobmetcalf.travelblog.model.ImmutableProperties;
 import uk.co.jacobmetcalf.travelblog.model.Properties;
 import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 import uk.co.jacobmetcalf.travelblog.htmlrenderer.SimpleElementWriter;

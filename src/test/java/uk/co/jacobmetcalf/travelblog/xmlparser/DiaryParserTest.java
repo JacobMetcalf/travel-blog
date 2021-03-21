@@ -9,9 +9,9 @@ import java.io.InputStream;
 import java.util.Optional;
 import javax.xml.stream.XMLStreamException;
 import org.junit.jupiter.api.Test;
-import uk.co.jacobmetcalf.travelblog.htmlrenderer.ImmutableProperties;
 import uk.co.jacobmetcalf.travelblog.model.Anchor;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
+import uk.co.jacobmetcalf.travelblog.model.ImmutableProperties;
 import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 
 public class DiaryParserTest {

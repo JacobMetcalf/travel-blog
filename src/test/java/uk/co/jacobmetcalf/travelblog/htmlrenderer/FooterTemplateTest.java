@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.containsString;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import uk.co.jacobmetcalf.travelblog.model.ImmutableProperties;
 import uk.co.jacobmetcalf.travelblog.model.Properties;
 import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 import uk.co.jacobmetcalf.travelblog.model.TestData;

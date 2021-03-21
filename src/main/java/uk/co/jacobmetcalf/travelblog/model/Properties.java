@@ -3,8 +3,6 @@ package uk.co.jacobmetcalf.travelblog.model;
 import java.util.Map;
 import java.util.Optional;
 import org.immutables.value.Value;
-import uk.co.jacobmetcalf.travelblog.htmlrenderer.ImmutableProperties;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableStyle;
 
 /**
  * Properties provide all the necessary API keys and social media

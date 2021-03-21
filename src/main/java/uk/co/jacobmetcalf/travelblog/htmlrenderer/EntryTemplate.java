@@ -28,6 +28,7 @@ public class EntryTemplate {
           .h6()
             .attrClass("card-subtitle")
             .of(h -> h.text(formatDate(entry.getDate())))
+            .br().attrClass("d-sm-none").__()
             .span()
               .attrClass("float-md-right")
               .of(addLocation(entry))

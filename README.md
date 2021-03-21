@@ -11,15 +11,14 @@ irritated by rising prices for hosting at an ISP trying to force me to use Wordp
 hosting solution based on static HTML. So I wrote this application to convert my files
 in a static fashion prior to uploading.
 
+### How do I run it?
+
+
 ### What hosting solution do you use?
 The approach I use at https://jacobmetcalf.co.uk is pretty simple and cheap:
  * A storage bucket at Google Cloud. I am over the 5GB free tier but even then it costs less than a pound a month.
  * Storage buckets can be exposed as an IP address via http only.
  * DNS proxies at Cloudflare to expose as https and host the certificates. This is completely free.
-
-### Why XML not Json?
-Partly because json did not exist when I started. However XML does offer one key advantage: support for mixed content,
-which proves invaluable when trying to enrich text with links and other content.
 
 ### How has the application been designed?
 There are three components to the application:
@@ -39,3 +38,7 @@ For those that are interested I found xmlet.org by way of [htmlflow.org](https:/
 Whilst htmlflow provided the DSL I wanted I struggled with dynamic views. It appeared that whilst
 good for performance you lost the compile time enforcing of correctness. So not needing the 
 performance I just used the underlying HTML5 dsl and wrote my own element writer.
+
+### Why XML not Json?
+Partly because json did not exist when I started. However XML does offer one key advantage: support for mixed content,
+which proves invaluable when trying to enrich text with links and other content.

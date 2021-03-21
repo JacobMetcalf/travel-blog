@@ -22,7 +22,7 @@ public class NavbarTemplate {
     // @formatter:off
     return parent
         .nav().attrClass("navbar navbar-dark bg-dark my-3")
-          .div().attrClass("navbar-brand")
+          .div().attrClass("navbar-text text-light") // light because we do not want muted
             .text(diary.getTitle())
           .__()
           .ul().attrClass("nav justify-content-end")
