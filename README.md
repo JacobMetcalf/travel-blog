@@ -12,7 +12,36 @@ hosting solution based on static HTML. So I wrote this application to convert my
 in a static fashion prior to uploading.
 
 ### How do I run it?
+Firsly build using `mvn install`. When executing it all the arguments can be specified on the command line each time, 
+but I find it easier to create a file called `travel-blog.properties` with all your keys in:
 
+```text
+--googlekey
+<your google api key>
+--url
+<canonical url, the url that you want Google to index e.g. https://www.jacobmetcalf.co.uk>
+--amazonkey
+<optional amazon associates key>
+--linkedin
+<optional LinkedIn id, e.g. jacobmetcalf>
+--facebook
+<optional facebook account, e.g. jacob.metcalf.98>
+--github
+<optional github account, e.g. JacobMetcalf>
+-r 
+```
+Then this can be executed as follows, where the `@` argument is the properties file you just created
+and`<dir>` is the directory where the xml files to be processed can be found:
+
+```text
+java -p target/travel-blog-1.0-SNAPSHOT.jar:target/lib 
+  -m uk.co.jacobmetcalf.travelblog/uk.co.jacobmetcalf.travelblog.Main 
+  @travel-blog.properties 
+  <dir>
+```
+
+**Note:** The above module path is ugly. I am currently researching jlink
+as a solution to package but it does not deal with auto-modules out of the box.
 
 ### What hosting solution do you use?
 The approach I use at https://jacobmetcalf.co.uk is pretty simple and cheap:
