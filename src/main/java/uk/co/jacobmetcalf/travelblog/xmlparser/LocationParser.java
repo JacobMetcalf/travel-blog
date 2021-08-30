@@ -38,6 +38,7 @@ public class LocationParser implements ElementPullParser<Location> {
    * @throws XMLStreamException If could not parse Xml
    * @throws IllegalStateException If encounters Xml it is not expecting
    */
+  @Override
   public Location pullElement(final XMLEventReader xmlEventReader,
       @Nullable final Locatable parentLocatable)
       throws XMLStreamException {

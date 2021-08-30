@@ -9,8 +9,6 @@ import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.P;
 import org.xmlet.htmlapifaster.Script;
 import org.xmlet.htmlapifaster.Ul;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
-import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 
 public class TestHelper {
   public static <Z extends Element<Z,?>> String renderInDiv(final Consumer<Div<Z>> unitAdd) {

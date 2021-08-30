@@ -1,7 +1,6 @@
 package uk.co.jacobmetcalf.travelblog.model;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 import org.immutables.value.Value;
 
@@ -11,15 +10,11 @@ import org.immutables.value.Value;
  */
 @ImmutableStyle
 @Value.Immutable
-public abstract class Diary implements Locatable {
-  public abstract String getTitle();
-  public abstract Optional<String> getSummary();
-  public abstract String getFilename();
-  public abstract String getThumb();
+public abstract class Diary implements LocatableWithSummary {
   public abstract List<Anchor> getNavigationAnchors();
   public abstract List<Book> getBooks();
   public abstract Stream<EntryOrRoute> getEntriesAndRoutes();
 
   // Extend builder for common attributes
-  interface Builder extends Locatable.Builder {}
+  interface Builder extends LocatableWithSummary.Builder {}
 }

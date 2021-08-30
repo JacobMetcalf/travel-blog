@@ -1,9 +1,11 @@
 package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 
+import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.xmlet.htmlapifaster.Div;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.Ul;
-import uk.co.jacobmetcalf.travelblog.model.Diary;
+import uk.co.jacobmetcalf.travelblog.model.Anchor;
 
 /**
  * Template which renders the navigation bar of the diary page, with various links.
@@ -11,11 +13,16 @@ import uk.co.jacobmetcalf.travelblog.model.Diary;
 public class NavbarTemplate {
 
   private final NavigationAnchorTemplate navigationAnchorTemplate;
-  private final Diary diary;
+  private final String title;
 
-  public NavbarTemplate(Diary diary) {
-    this.diary = diary;
-    this.navigationAnchorTemplate = new NavigationAnchorTemplate(diary.getNavigationAnchors());
+  public NavbarTemplate(String title, List<Anchor> anchors) {
+    this.title = title;
+    this.navigationAnchorTemplate = new NavigationAnchorTemplate(anchors);
+  }
+
+  public NavbarTemplate(String title) {
+    this.title = title;
+    this.navigationAnchorTemplate = new NavigationAnchorTemplate(ImmutableList.of());
   }
 
   public <T extends Element<T,?>> Div<T> add(final Div<T> parent) {
@@ -23,7 +30,7 @@ public class NavbarTemplate {
     return parent
         .nav().attrClass("navbar navbar-dark bg-dark my-3")
           .div().attrClass("navbar-text text-light") // light because we do not want muted
-            .text(diary.getTitle())
+            .text(title)
           .__()
           .ul().attrClass("nav justify-content-end")
             .of(this::addSlideshowLink)

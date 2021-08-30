@@ -24,6 +24,7 @@ public class ImageParser implements ElementPullParser<Image> {
               Image.Position.valueOf(a.getValue().toUpperCase()))))
           .build();
 
+  @Override
   public Image pullElement(final XMLEventReader xmlEventReader,
       final Locatable parentLocatable) throws XMLStreamException {
 

@@ -8,7 +8,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableParagraph.Builder;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableText;
 import uk.co.jacobmetcalf.travelblog.model.Locatable;
 import uk.co.jacobmetcalf.travelblog.model.Paragraph;
@@ -56,7 +55,7 @@ public class ParagraphParser implements ElementPullParser<Paragraph> {
 
   private void handleElement(final XMLEventReader xmlEventReader, final XMLEvent peekedEvent,
       final Locatable parentLocatable,
-      final Builder paragraphBuilder) throws XMLStreamException {
+      final ImmutableParagraph.Builder paragraphBuilder) throws XMLStreamException {
 
       switch (ElementToken.fromEventName(peekedEvent)) {
         case IMAGE -> paragraphBuilder.addImages(
@@ -72,7 +71,7 @@ public class ParagraphParser implements ElementPullParser<Paragraph> {
       }
   }
 
-  private void handleCharacters(final XMLEventReader reader, final Builder paragraphBuilder)
+  private void handleCharacters(final XMLEventReader reader, final ImmutableParagraph.Builder paragraphBuilder)
       throws XMLStreamException {
     Characters asCharacters = reader.nextEvent().asCharacters();
     if (!asCharacters.isIgnorableWhiteSpace()) {

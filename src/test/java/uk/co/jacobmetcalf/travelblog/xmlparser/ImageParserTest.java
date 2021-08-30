@@ -23,6 +23,6 @@ public class ImageParserTest {
 
     assertThat(actual.getCountry().orElseThrow(), equalTo("Ecuador"));
     assertThat(actual.getProvince().orElseThrow(), equalTo("Cotopaxi"));
-    assertThat(actual.getLocation().orElseThrow(), equalTo("Chugchilán"));
+    assertThat(actual.getLocation(), equalTo("Chugchilán"));
   }
 }

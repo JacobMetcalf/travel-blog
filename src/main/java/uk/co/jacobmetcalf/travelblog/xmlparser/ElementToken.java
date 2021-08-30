@@ -22,9 +22,10 @@ public enum ElementToken {
   POINT;
 
   /**
+   * Returns event name as an element.
    * @throws IllegalStateException if not a start or end element
-   * @return Event name as an element.
    */
+  @SuppressWarnings("UnnecessaryParentheses") //https://github.com/google/error-prone/issues/1647
   public static ElementToken fromEventName(final XMLEvent event) {
 
     String name = switch (event.getEventType()) {

@@ -2,6 +2,9 @@ package uk.co.jacobmetcalf.travelblog;
 
 import com.beust.jcommander.JCommander;
 
+/**
+ * Main method, calls JCommander then invokes {@link Executor}.
+ */
 public class Main {
 
   public static void main(String[] args) {

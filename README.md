@@ -1,4 +1,14 @@
 # travelblog
+##### Table of Contents
+[Overview](#overview)  
+[Why did I write this?](#why-did-i-write-this)  
+[How do I run it?](#how-do-i-run-it)  
+[What hosting solution do you use?](#what-hosting-solution-do-you-use)    
+[How has the application been designed?](#how-has-the-application-been-designed)  
+[Why XML not Json?](#why-xml-not-json)  
+[Static analysis and testing](#static-analysis-and-testing)
+
+### Overview
 
 Java application to convert a diary maintained in xml into static HTML: 
 
@@ -69,5 +79,11 @@ good for performance you lost the compile time enforcing of correctness. So not 
 performance I just used the underlying HTML5 dsl and wrote my own element writer.
 
 ### Why XML not Json?
-Partly because json did not exist when I started. However XML does offer one key advantage: support for mixed content,
+Mostly because json did not exist in the 90s! However XML does offer one key advantage: support for mixed content,
 which proves invaluable when trying to enrich text with links and other content.
+
+### Static analysis and testing 
+Uses:
+ * Google [Errorprone](https://errorprone.info/): For static code analysis.
+ * There are a suite of Junit5 tests.
+ * I am currently experimenting with PITest to improve the quality of testing

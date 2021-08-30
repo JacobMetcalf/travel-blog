@@ -6,7 +6,7 @@ import uk.co.jacobmetcalf.travelblog.model.Anchor;
 public class AnchorTemplate {
 
   /**
-   * Adds an href to a paragraph .
+   * Adds an href to a paragraph.
    */
   public <T extends Element<T,?>> P<T> add(final P<T> parent, final Anchor anchor) {
     // @formatter:off

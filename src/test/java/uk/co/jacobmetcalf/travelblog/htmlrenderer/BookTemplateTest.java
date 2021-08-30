@@ -9,14 +9,13 @@ import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableProperties;
 import uk.co.jacobmetcalf.travelblog.model.Properties;
-import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 
 public class BookTemplateTest {
 
   @Test
   public void can_render_book() {
     final BookTemplate unit = new BookTemplate(ImmutableList.of(BOOK_1),
-        Properties.of(Key.AMAZON_ASSOCIATES_ID, "test-tag"));
+        Properties.of(Properties.Key.AMAZON_ASSOCIATES_ID, "test-tag"));
     String actualHtml = TestHelper.renderInDiv(d -> {
       unit.add(d);
     });

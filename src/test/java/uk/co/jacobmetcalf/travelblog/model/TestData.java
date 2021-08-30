@@ -70,7 +70,7 @@ public final class TestData {
       .from(QUITO)
       .title("Test title")
       .thumb("test.gif")
-      .filename("test.xml")
+      .canonicalUrl("https://www.test.com/file.html")
       .entriesAndRoutes(Stream.empty())
       .build();
 
@@ -78,7 +78,7 @@ public final class TestData {
       .from(QUITO)
       .title("Test title")
       .thumb("test.gif")
-      .filename("test.xml")
+      .canonicalUrl("https://www.test.com/file.html")
       .addNavigationAnchors(
           ImmutableAnchor.builder().icon("backward").text("Prev").ref("https://forwards.com").build(),
           ImmutableAnchor.builder().icon("forward").text("Next").ref("https://backwards.com").build())

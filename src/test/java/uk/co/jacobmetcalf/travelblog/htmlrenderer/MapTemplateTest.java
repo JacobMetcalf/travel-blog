@@ -6,13 +6,12 @@ import static org.hamcrest.Matchers.not;
 
 import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.Properties;
-import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 import uk.co.jacobmetcalf.travelblog.model.TestData;
 
 public class MapTemplateTest {
 
   private final MapTemplate unit = new MapTemplate(TestData.QUITO,
-      Properties.of(Key.GOOGLE_API_KEY, "my-api-key"));
+      Properties.of(Properties.Key.GOOGLE_API_KEY, "my-api-key"));
 
   @Test
   public void can_render_route() {
@@ -27,7 +26,7 @@ public class MapTemplateTest {
   @Test
   public void can_render_location() {
     String actualHtml = TestHelper.renderInScript(d -> {
-      MapTemplate.addLocation(d, TestData.QUITO);
+      MapTemplate.addLocation(d, TestData.QUITO, null);
     });
 
     // Check location plotting
@@ -37,7 +36,7 @@ public class MapTemplateTest {
   @Test
   public void ignores_no_coord_location() {
     String actualHtml = TestHelper.renderInScript(d -> {
-      MapTemplate.addLocation(d, TestData.ECUADOR);
+      MapTemplate.addLocation(d, TestData.ECUADOR, null);
     });
 
     // Check does not cause null pointer exception

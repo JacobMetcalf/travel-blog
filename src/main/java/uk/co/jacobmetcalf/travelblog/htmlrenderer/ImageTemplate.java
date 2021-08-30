@@ -36,11 +36,13 @@ public class ImageTemplate {
     // @formatter:on
   }
 
+  @SuppressWarnings("UnnecessaryParentheses") //https://github.com/google/error-prone/issues/1647
   private <T extends Element<T,?>> Consumer<Figure<Div<T>>> addAlignmentAttribute(final Image.Position position) {
-    return f -> f.attrClass(switch (position) {
+    final String attrClass = switch (position) {
       case LEFT -> "figure float-md-left pr-3 clear-left";
       case RIGHT -> "figure float-md-right pl-3 clear-right";
       case NONE -> "figure pr-3";
-    });
+    };
+    return f -> f.attrClass(attrClass);
   }
 }

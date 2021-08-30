@@ -14,39 +14,42 @@ import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableDiary;
 import uk.co.jacobmetcalf.travelblog.model.Locatable;
 import uk.co.jacobmetcalf.travelblog.model.Properties;
-import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 
 /**
  * Pull parses an XML document into an ordered stream of Entry objects.
  *
- * The stream ensures that we are only dealing with a day at a time so keeps the memory a bit
- * more efficient.
+ * Returning "entriesAndRoutes" stream ensures that we are only dealing with a day at a time
+ * so keeps the memory a bit more efficient.
  */
 public class DiaryParser {
 
   private XMLEventReader xmlEventReader;
   private Locatable rootLocatable;
+  private final String canonicalUrlOfDiary;
   private final AnchorPullParser navigationParser;
   private final BookPullParser bookParser = new BookPullParser();
   private final StringPullParser stringPullParser = new StringPullParser();
 
-  private final AttributeParser<ImmutableDiary.Builder> attributeParser =
+  private final AttributeParser<ImmutableDiary.Builder> attributeParser;
+
+  public DiaryParser(final Properties properties, final String canonicalUrl,
+      final String canonicalUrlOfImages) {
+    this.navigationParser = new AnchorPullParser(ElementToken.NAVIGATION,
+        properties.get(Properties.Key.CANONICAL_URL).orElseThrow());
+    this.canonicalUrlOfDiary = canonicalUrl;
+    this.attributeParser =
       new LocationParser().addLocationAttributes(AttributeParser.<ImmutableDiary.Builder>builder()
           .withElementToken(ElementToken.DIARY)
           .put(AttributeToken.TITLE, (b, a) -> b.title(a.getValue()))
-          .put(AttributeToken.THUMB, (b, a) -> b.thumb(a.getValue())))
+          .put(AttributeToken.THUMB, (b, a) -> b.thumb(canonicalUrlOfImages + "/" + a.getValue())))
           .build();
-
-  public DiaryParser(final Properties properties) {
-    this.navigationParser = new AnchorPullParser(ElementToken.NAVIGATION,
-        properties.get(Key.CANONICAL_URL).orElseThrow());
   }
 
-  public Diary parse(final String filename, final InputStream inputStream) throws XMLStreamException {
+  public Diary parse(final InputStream inputStream) throws XMLStreamException {
 
     ImmutableDiary.Builder diaryBuilder = ImmutableDiary.builder();
     Preconditions.checkNotNull(inputStream, "Input stream cannot be null");
-    diaryBuilder.filename(filename);
+    diaryBuilder.canonicalUrl(canonicalUrlOfDiary);
 
     try {
       xmlEventReader = FilteredReaderFactory.create(inputStream);
@@ -55,7 +58,8 @@ public class DiaryParser {
       XMLEvent event = xmlEventReader.nextEvent();
       Preconditions.checkState(event.isStartDocument(), "Expected start of document");
 
-      // Process first two nested elements
+      // Process the "diary" element plus its child "summary" element as the attributes tend
+      // to be split over both.
       attributeParser.parse(diaryBuilder,
           ElementToken.asStartElement(xmlEventReader.nextEvent(), ElementToken.DIARY));
       attributeParser.parse(diaryBuilder,
@@ -74,6 +78,7 @@ public class DiaryParser {
           false));
 
       Diary result = diaryBuilder.build();
+      // Iterator will refer to the root location
       this.rootLocatable = result;
       iterator.next();
       return result;

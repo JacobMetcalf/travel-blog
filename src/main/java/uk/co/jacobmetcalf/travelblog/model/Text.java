@@ -10,6 +10,7 @@ import org.immutables.value.Value;
 public abstract class Text implements ParagraphPart {
   public abstract String getText();
 
+  @Override
   public void visit(final ParagraphPart.Visitor visitor) {
     visitor.visit(this);
   }

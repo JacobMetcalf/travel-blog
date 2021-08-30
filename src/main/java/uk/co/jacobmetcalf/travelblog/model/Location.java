@@ -12,6 +12,7 @@ public abstract class Location implements Locatable, ParagraphPart {
 
   interface Builder extends Locatable.Builder {}
 
+  @Override
   public void visit(final ParagraphPart.Visitor visitor) {
     visitor.visit(this);
   }

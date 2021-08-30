@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
@@ -73,7 +74,7 @@ public class AttributeParserTest {
 
   private StartElement parse_xml_to_start(String inputXml) {
     try (
-        InputStream inputStream = new ByteArrayInputStream(inputXml.getBytes())) {
+        InputStream inputStream = new ByteArrayInputStream(inputXml.getBytes(StandardCharsets.UTF_8))) {
       XMLEventReader xmlEventReader = FilteredReaderFactory.create(inputStream);
 
       // Skip start document

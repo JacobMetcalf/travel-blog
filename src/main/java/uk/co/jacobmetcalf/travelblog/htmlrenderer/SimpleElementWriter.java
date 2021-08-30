@@ -35,7 +35,7 @@ public class SimpleElementWriter extends ElementVisitor {
   private static final char FINISH_TAG = '>';
   private static final char SPACE = ' ';
   private static final char QUOTATION = '"';
-  private static final Set<Class<?>> HTML_VOID_ELEMENTS = ImmutableSet.of(
+  private static final ImmutableSet<Class<?>> HTML_VOID_ELEMENTS = ImmutableSet.of(
       Area.class, Base.class, Br.class, Col.class, Embed.class, Hr.class, Img.class,
       Input.class, Link.class, Meta.class, Param.class, Source.class, Track.class, Wbr.class);
 

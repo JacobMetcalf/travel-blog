@@ -22,7 +22,7 @@ public class LocationParserTest {
     Location actual = TestHelper.tryParse(inputXml, unit, TestData.QUITO);
     assertThat(actual.getCountry().orElseThrow(), equalTo("Ecuador"));
     assertThat(actual.getProvince().orElseThrow(), equalTo("Pichincha"));
-    assertThat(actual.getLocation().orElseThrow(), equalTo("Riobamba"));
+    assertThat(actual.getLocation(), equalTo("Riobamba"));
     assertThat(actual.getLatitude().orElseThrow(), closeTo(-1.6733, 0.00001));
     assertThat(actual.getLongitude().orElseThrow(), closeTo(-78.6517, 0.00001));
     assertThat(actual.getZoom(), Matchers.equalTo(5));

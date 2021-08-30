@@ -1,11 +1,12 @@
 package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 
+import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.xmlet.htmlapifaster.Body;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.Ul;
+import uk.co.jacobmetcalf.travelblog.model.Anchor;
 import uk.co.jacobmetcalf.travelblog.model.Properties;
-import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
-import uk.co.jacobmetcalf.travelblog.model.Diary;
 
 /**
  * Template which renders the footer of the diary page, with various social media links.
@@ -15,9 +16,14 @@ public class FooterTemplate {
   private final Properties properties;
   private final NavigationAnchorTemplate navigationAnchorTemplate;
 
-  public FooterTemplate(final Diary diary, final Properties properties) {
+  public FooterTemplate(final List<Anchor> anchors, final Properties properties) {
     this.properties = properties;
-    this.navigationAnchorTemplate = new NavigationAnchorTemplate(diary.getNavigationAnchors());
+    this.navigationAnchorTemplate = new NavigationAnchorTemplate(anchors);
+  }
+
+  public FooterTemplate(final Properties properties) {
+    this.properties = properties;
+    this.navigationAnchorTemplate = new NavigationAnchorTemplate(ImmutableList.of());
   }
 
   public <T extends Element<T,?>> Body<T> add(final Body<T> parent) {
@@ -42,7 +48,7 @@ public class FooterTemplate {
 
   private <T extends Element<T,?>> Ul<T> addLinkedInIcon(final Ul<T> parent) {
     // @formatter:off
-    return properties.get(Key.LINKED_IN).map(
+    return properties.get(Properties.Key.LINKED_IN).map(
         l -> parent.li().attrClass("nav-item")
             .a().attrClass("nav-link").attrHref("https://linkedin.com/in/" + l)
               .i().attrClass("fa fa-linkedin-square")
@@ -55,7 +61,7 @@ public class FooterTemplate {
 
   private <T extends Element<T,?>> Ul<T> addFacebookIcon(final Ul<T> parent) {
     // @formatter:off
-    return properties.get(Key.FACEBOOK).map(
+    return properties.get(Properties.Key.FACEBOOK).map(
         f -> parent.li().attrClass("nav-item")
             .a().attrClass("nav-link").attrHref("https://facebook.com/" + f)
               .i().attrClass("fa fa-facebook-square")
@@ -68,7 +74,7 @@ public class FooterTemplate {
 
   private <T extends Element<T,?>> Ul<T> addTwitterIcon(final Ul<T> parent) {
     // @formatter:off
-    return properties.get(Key.TWITTER).map(
+    return properties.get(Properties.Key.TWITTER).map(
         f -> parent.li().attrClass("nav-item")
             .a().attrClass("nav-link").attrHref("https://twitter.com/" + f)
               .i().attrClass("fa fa-twitter-square")
@@ -81,7 +87,7 @@ public class FooterTemplate {
 
   private <T extends Element<T,?>> Ul<T> addGitHubIcon(final Ul<T> parent) {
     // @formatter:off
-    return properties.get(Key.GITHUB).map(
+    return properties.get(Properties.Key.GITHUB).map(
         g -> parent.li().attrClass("nav-item")
             .a().attrClass("nav-link").attrHref("https://github.com/" + g)
               .i().attrClass("fa fa-github-square")

@@ -10,15 +10,21 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <immutables.version>2.8.2</immutables.version>
-        <guava.version>29.0-jre</guava.version>
-        <htmlflow.version>3.5</htmlflow.version>
-        <jcommander.version>1.78</jcommander.version>
-        <commons.io.version>2.8.0</commons.io.version>
-        <jdk.version>14</jdk.version>
-        <junit5.version>5.6.2</junit5.version>
-        <slf4j.version>2.0.0-alpha1</slf4j.version>
-        <logback.version>1.3.0-alpha4</logback.version>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
+        <java.version>16</java.version>
+        <immutables.version>2.9.0-beta3</immutables.version>
+        <guava.version>30.1.1-jre</guava.version>
+        <htmlapi.version>1.0.8</htmlapi.version>
+        <xsdasm.version>1.0.7</xsdasm.version>
+        <jcommander.version>1.81</jcommander.version>
+        <commons.io.version>2.11.0</commons.io.version>
+        <jdk.version>16</jdk.version>
+        <junit5.version>5.8.0-RC1</junit5.version>
+        <slf4j.version>2.0.0-alpha5</slf4j.version>
+        <logback.version>1.3.0-alpha10</logback.version>
+        <error.prone.version>2.9.0</error.prone.version>
+        <checker.version>2.11.1</checker.version>
     </properties>
 
     <dependencyManagement>
@@ -57,7 +63,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- Not very clear why this is needed see: https://github.com/immutables/immutables/issues/713 -->
         <dependency>
             <groupId>org.immutables</groupId>
             <artifactId>value</artifactId>
@@ -73,7 +78,7 @@
         <dependency>
             <groupId>com.github.xmlet</groupId>
             <artifactId>htmlApiFaster</artifactId>
-            <version>1.0.7</version>
+            <version>${htmlapi.version}</version>
         </dependency>
 
         <dependency>
@@ -89,7 +94,7 @@
         <dependency>
             <groupId>com.github.xmlet</groupId>
             <artifactId>xsdAsmFaster</artifactId>
-            <version>1.0.5</version>
+            <version>${xsdasm.version}</version>
             <!-- Transitive dependencies include junit so exclude them all -->
             <exclusions>
                 <exclusion>
@@ -133,7 +138,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.3.3</version>
+            <version>3.12.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -152,27 +157,37 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
+                    <fork>true</fork>
                     <compilerArgs>
                         <arg>-XDcompilePolicy=simple</arg>
-                        <arg>-Xplugin:ErrorProne</arg>
+                        <arg>-Xplugin:ErrorProne -XepExcludedPaths:.*/target/generated-sources/.*</arg>
+                        <arg>-Werror</arg>
+                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED</arg>
+                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                        <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                        <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
-                        <path>
-                            <groupId>com.google.errorprone</groupId>
-                            <artifactId>error_prone_core</artifactId>
-                            <version>2.4.0</version>
-                        </path>
                         <path>
                             <groupId>org.immutables</groupId>
                             <artifactId>value</artifactId>
                             <version>${immutables.version}</version>
                         </path>
                         <path>
+                            <groupId>com.google.errorprone</groupId>
+                            <artifactId>error_prone_core</artifactId>
+                            <version>${error.prone.version}</version>
+                        </path>
+                        <path>
                             <groupId>org.checkerframework</groupId>
                             <artifactId>checker-qual</artifactId>
-                            <version>2.11.1</version>
+                            <version>${checker.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

@@ -10,7 +10,18 @@ import org.immutables.value.Value;
 public interface Locatable {
   Optional<String> getCountry();
   Optional<String> getProvince();
-  Optional<String> getLocation();
+
+  /**
+   * Location cannot be blank as it is used as a label so we try to default it
+   * from country or province. If both these are not provided then throw an exception.
+   */
+  @Value.Default
+  default String getLocation() {
+    return getCountry()
+        .orElseGet(() -> getProvince()
+            .orElseThrow(() -> new IllegalArgumentException("One of 'location', 'country' or 'province' attributes must be set")));
+  }
+
   Optional<Double> getLongitude();
   Optional<Double> getLatitude();
   @Value.Default

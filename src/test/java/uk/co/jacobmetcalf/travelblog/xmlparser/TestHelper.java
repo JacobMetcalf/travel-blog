@@ -3,16 +3,16 @@ package uk.co.jacobmetcalf.travelblog.xmlparser;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.XMLEvent;
 import org.junit.jupiter.api.Assertions;
 import uk.co.jacobmetcalf.travelblog.model.Location;
 
 public class TestHelper {
   public static <E> E tryParse(String inputXml, ElementPullParser<E> unit,
       Location parentLocation) {
-    try (InputStream inputStream = new ByteArrayInputStream(inputXml.getBytes())) {
+    try (InputStream inputStream = new ByteArrayInputStream(inputXml.getBytes(StandardCharsets.UTF_8))) {
       XMLEventReader xmlEventReader = FilteredReaderFactory.create(inputStream);
 
       // Skip start document

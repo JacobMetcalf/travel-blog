@@ -13,6 +13,7 @@ public abstract class Anchor implements ParagraphPart {
   public abstract String getText();
   public abstract Optional<String> getIcon();
 
+  @Override
   public void visit(final ParagraphPart.Visitor visitor) {
     visitor.visit(this);
   }

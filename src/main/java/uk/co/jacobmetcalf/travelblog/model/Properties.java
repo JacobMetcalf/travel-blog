@@ -22,7 +22,7 @@ public abstract class Properties {
   }
 
   /**
-   * @return The entire property array.
+   * Returns the entire property array.
    */
   public abstract Map<Key, String> value();
 

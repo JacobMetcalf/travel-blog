@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
@@ -13,6 +14,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.Book;
+import uk.co.jacobmetcalf.travelblog.model.Properties;
 
 public class BookPullParserTest {
 
@@ -62,7 +64,7 @@ public class BookPullParserTest {
 
 
   private List<Book> tryParse(String inputXml) {
-    try (InputStream inputStream = new ByteArrayInputStream(inputXml.getBytes())) {
+    try (InputStream inputStream = new ByteArrayInputStream(inputXml.getBytes(StandardCharsets.UTF_8))) {
       XMLEventReader xmlEventReader = FilteredReaderFactory.create(inputStream);
 
       // Skip start document

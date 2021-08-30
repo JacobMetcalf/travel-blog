@@ -2,13 +2,13 @@ package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 
 import com.google.common.base.Preconditions;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.xmlet.htmlapifaster.Div;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.EnumTypeScriptType;
 import org.xmlet.htmlapifaster.Script;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
-import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 import uk.co.jacobmetcalf.travelblog.model.Locatable;
+import uk.co.jacobmetcalf.travelblog.model.Properties;
 import uk.co.jacobmetcalf.travelblog.model.Route;
 
 /**
@@ -23,7 +23,7 @@ public class MapTemplate {
   public MapTemplate(final Locatable centre, final Properties properties) {
     Preconditions.checkArgument(centre.hasCoords(), "Map centre must have coordinates");
     this.centre = centre;
-    this.apiKey = properties.get(Key.GOOGLE_API_KEY).orElseThrow();
+    this.apiKey = properties.get(Properties.Key.GOOGLE_API_KEY).orElseThrow();
   }
 
   /**
@@ -47,14 +47,21 @@ public class MapTemplate {
    * dictionary which will be rendered as points on the map.
    */
   public static <T extends Element<T,?>> Script<T> addLocation(
-      final Script<T> script, final Locatable locatable) {
+      final Script<T> script, final Locatable locatable, @Nullable String popupHtml) {
 
-    if (!locatable.hasCoords() || locatable.getLocation().isEmpty()) { return script; }
+    if (!locatable.hasCoords() || locatable.getLocation().isEmpty()) {
+      return script;
+    }
 
-    return script.attrType(EnumTypeScriptType.TEXT_JAVASCRIPT)
-        .text("locations[\"" + locatable.getLocation().get()
-            + "\"] = {lat:" + locatable.getLatitude().orElse(0d)
-            + ",lng:" + locatable.getLongitude().orElse(0d) + "};");
+    String addLocationEntryJs = "locations[\"" + locatable.getLocation()
+        + "\"] = {lat:" + locatable.getLatitude().orElse(0d)
+        + ",lng:" + locatable.getLongitude().orElse(0d);
+
+    if (popupHtml != null) {
+      addLocationEntryJs += ",popup:`" + popupHtml + "`";
+    }
+    addLocationEntryJs += "};";
+    return script.attrType(EnumTypeScriptType.TEXT_JAVASCRIPT).text(addLocationEntryJs);
   }
 
   /**

@@ -2,14 +2,11 @@ package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 
 import java.util.List;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmlet.htmlapifaster.Div;
 import org.xmlet.htmlapifaster.Element;
-import uk.co.jacobmetcalf.travelblog.Executor;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
-import uk.co.jacobmetcalf.travelblog.model.Properties.Key;
 import uk.co.jacobmetcalf.travelblog.model.Book;
+import uk.co.jacobmetcalf.travelblog.model.Properties;
+
 
 /**
  * Template which shows a series of images of books read on the trip and, if you provide an
@@ -18,13 +15,12 @@ import uk.co.jacobmetcalf.travelblog.model.Book;
 public class BookTemplate {
 
   public static final String AMAZON_BASE = "https://www.amazon.co.uk/gp/product/";
-  private final Optional<String> associatesTag;
+  private final String associatesTag;
   private final List<Book> books;
 
-  private static final Logger logger = LoggerFactory.getLogger(Executor.class.getName());
-
   public BookTemplate(final List<Book> books, final Properties properties) {
-    this.associatesTag = properties.get(Key.AMAZON_ASSOCIATES_ID);
+    this.associatesTag = properties.get(Properties.Key.AMAZON_ASSOCIATES_ID)
+        .map(t -> "?tag=" + t).orElse("");
     this.books = books;
   }
 
@@ -39,8 +35,7 @@ public class BookTemplate {
   }
 
   private <T extends Element<T,?>> Div<T> addBook(final Div<T> parent, final Book book) {
-    String link = AMAZON_BASE + book.getIsin() +
-        associatesTag.map(t -> "?tag=" + t).orElse("");
+    String link = AMAZON_BASE + book.getIsin() + associatesTag;
     return parent
         .a().attrTarget("_blank").attrHref(link)
           .img().attrSrc("https://images-na.ssl-images-amazon.com/images/P/"

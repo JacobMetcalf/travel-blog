@@ -22,13 +22,13 @@ public class LocationTemplate {
 
     // @formatter:off
     E result = parent
-        .a().attrId(locatable.getLocation().orElseThrow()).__()
+        .a().attrId(locatable.getLocation()).__()
         .a()
           .of(ifNoWikiLinkToMap(locatable))
           .of(a -> a.text(fullyQualified ?
-              formatLocatable(locatable) : locatable.getLocation().get()))
+              formatLocatable(locatable) : locatable.getLocation()))
         .__()
-        .script().of(s -> MapTemplate.addLocation(s, locatable)).__();
+        .script().of(s -> MapTemplate.addLocation(s, locatable, null)).__();
     // @formatter:on
     ifWikiAddGlobeIcon(result, locatable);
     return result;
@@ -62,7 +62,7 @@ public class LocationTemplate {
   }
 
 	public static String formatLocatable(final Locatable locatable) {
-	  return LOCATION_JOINER.join(locatable.getLocation().orElse(null),
+	  return LOCATION_JOINER.join(locatable.getLocation(),
         locatable.getProvince().orElse(null),
         locatable.getCountry().orElse(null));
   }
