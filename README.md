@@ -84,6 +84,7 @@ which proves invaluable when trying to enrich text with links and other content.
 
 ### Static analysis and testing 
 Uses:
- * Google [Errorprone](https://errorprone.info/): For static code analysis.
- * There are a suite of Junit5 tests.
+ * Google [Error Prone](https://errorprone.info/): For static code analysis.
+ * [Checkerframework](https://checkerframework.org/) annotations for null checking in Intellij.
+ * Suite of Junit5 tests.
  * I am currently experimenting with PITest to improve the quality of testing

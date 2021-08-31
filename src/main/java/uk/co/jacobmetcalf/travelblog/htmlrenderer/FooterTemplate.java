@@ -26,9 +26,9 @@ public class FooterTemplate {
     this.navigationAnchorTemplate = new NavigationAnchorTemplate(ImmutableList.of());
   }
 
-  public <T extends Element<T,?>> Body<T> add(final Body<T> parent) {
+  public <T extends Element<T,?>> void add(final Body<T> parent) {
     // @formatter:off
-    return parent
+    parent
         .footer().attrClass("footer my-3")
           .div().attrClass("container")
             .nav().attrClass("navbar navbar-dark bg-dark")
@@ -46,55 +46,51 @@ public class FooterTemplate {
     // @formatter:on
   }
 
-  private <T extends Element<T,?>> Ul<T> addLinkedInIcon(final Ul<T> parent) {
+  private <T extends Element<T,?>> void addLinkedInIcon(final Ul<T> parent) {
     // @formatter:off
-    return properties.get(Properties.Key.LINKED_IN).map(
+    properties.get(Properties.Key.LINKED_IN).ifPresent(
         l -> parent.li().attrClass("nav-item")
             .a().attrClass("nav-link").attrHref("https://linkedin.com/in/" + l)
               .i().attrClass("fa fa-linkedin-square")
                 .attrTitle("View my profile on LinkedIn")
               .__()
-            .__().__())
-        .orElse(parent);
+            .__().__());
     // @formatter:on
   }
 
-  private <T extends Element<T,?>> Ul<T> addFacebookIcon(final Ul<T> parent) {
+  private <T extends Element<T,?>> void addFacebookIcon(final Ul<T> parent) {
     // @formatter:off
-    return properties.get(Properties.Key.FACEBOOK).map(
+    properties.get(Properties.Key.FACEBOOK).ifPresent(
         f -> parent.li().attrClass("nav-item")
             .a().attrClass("nav-link").attrHref("https://facebook.com/" + f)
               .i().attrClass("fa fa-facebook-square")
                 .attrTitle("View my profile on Facebook")
               .__()
-            .__().__())
-        .orElse(parent);
+            .__().__());
     // @formatter:on
   }
 
-  private <T extends Element<T,?>> Ul<T> addTwitterIcon(final Ul<T> parent) {
+  private <T extends Element<T,?>> void addTwitterIcon(final Ul<T> parent) {
     // @formatter:off
-    return properties.get(Properties.Key.TWITTER).map(
+    properties.get(Properties.Key.TWITTER).ifPresent(
         f -> parent.li().attrClass("nav-item")
             .a().attrClass("nav-link").attrHref("https://twitter.com/" + f)
               .i().attrClass("fa fa-twitter-square")
                 .attrTitle("View my Tweets")
               .__()
-            .__().__())
-        .orElse(parent);
+            .__().__());
     // @formatter:on
   }
 
-  private <T extends Element<T,?>> Ul<T> addGitHubIcon(final Ul<T> parent) {
+  private <T extends Element<T,?>> void addGitHubIcon(final Ul<T> parent) {
     // @formatter:off
-    return properties.get(Properties.Key.GITHUB).map(
+    properties.get(Properties.Key.GITHUB).ifPresent(
         g -> parent.li().attrClass("nav-item")
             .a().attrClass("nav-link").attrHref("https://github.com/" + g)
               .i().attrClass("fa fa-github-square")
                 .attrTitle("View my GitHub account")
               .__()
-            .__().__())
-        .orElse(parent);
+            .__().__());
     // @formatter:on
   }
 }

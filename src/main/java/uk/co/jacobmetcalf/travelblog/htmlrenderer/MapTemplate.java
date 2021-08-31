@@ -29,13 +29,13 @@ public class MapTemplate {
   /**
    * Javascript to add the route to the collection.
    */
-  public <T extends Element<T,?>> Div<T> addRoute(final Div<T> parent, final Route route) {
+  public <T extends Element<T,?>> void addRoute(final Div<T> parent, final Route route) {
 
     String routeJson = route.getPoints().stream()
         .map(p -> "{lat:" + p.getLatitude() + ",lng:" + p.getLongitude() + "}")
         .collect(Collectors.joining(","));
 
-    return parent
+    parent
         .script().attrType(EnumTypeScriptType.TEXT_JAVASCRIPT)
           .text("routes.push({path:[" + routeJson
               + "],geodesic: true,strokeColor:'#FF0000',strokeOpacity:1.0,strokeWeight:3});\n")
@@ -46,11 +46,11 @@ public class MapTemplate {
    * Used by the location template to add a location to a javascript
    * dictionary which will be rendered as points on the map.
    */
-  public static <T extends Element<T,?>> Script<T> addLocation(
+  public static <T extends Element<T,?>> void addLocation(
       final Script<T> script, final Locatable locatable, @Nullable String popupHtml) {
 
     if (!locatable.hasCoords() || locatable.getLocation().isEmpty()) {
-      return script;
+      return;
     }
 
     String addLocationEntryJs = "locations[\"" + locatable.getLocation()
@@ -61,15 +61,15 @@ public class MapTemplate {
       addLocationEntryJs += ",popup:`" + popupHtml + "`";
     }
     addLocationEntryJs += "};";
-    return script.attrType(EnumTypeScriptType.TEXT_JAVASCRIPT).text(addLocationEntryJs);
+    script.attrType(EnumTypeScriptType.TEXT_JAVASCRIPT).text(addLocationEntryJs);
   }
 
   /**
    * Adds a call back to centre the map, initialise the google api and then
    * call the initMap() function which plots all the routes.
    */
-  public <T extends Element<T,?>> Div<T> addFooterScript(final Div<T> parent) {
-    return parent
+  public <T extends Element<T,?>> void addFooterScript(final Div<T> parent) {
+    parent
         .script().attrType(EnumTypeScriptType.TEXT_JAVASCRIPT).text(
             "centre = {lat:" + centre.getLatitude().orElse(0d)
                 + ",lng:" + centre.getLongitude().orElse(0d) +"}; "

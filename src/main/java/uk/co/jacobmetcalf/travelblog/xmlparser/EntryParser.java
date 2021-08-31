@@ -6,7 +6,6 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import uk.co.jacobmetcalf.travelblog.model.Entry;
 import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableEntry;
@@ -30,7 +29,7 @@ public class EntryParser implements ElementPullParser<EntryOrRoute> {
 
   @Override
   public EntryOrRoute pullElement(final XMLEventReader xmlEventReader,
-      @Nullable final Locatable parentLocatable) throws XMLStreamException {
+      final Locatable parentLocatable) throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());
     final StartElement element =

@@ -16,7 +16,7 @@ public class NavigationAnchorTemplate {
     this.navigationAnchors = navigationAnchors;
   }
 
-  public <T extends Element<T,?>> Ul<T> add(final Ul<T> parent) {
+  public <T extends Element<T,?>> void add(final Ul<T> parent) {
     navigationAnchors.forEach(
         // @formatter:off
         a -> parent
@@ -29,6 +29,5 @@ public class NavigationAnchorTemplate {
             .__()
         // @formatter:on
     );
-    return parent;
   }
 }

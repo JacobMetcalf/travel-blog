@@ -14,7 +14,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import uk.co.jacobmetcalf.travelblog.model.Book;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
 
 public class BookPullParserTest {
 

@@ -47,29 +47,29 @@ public class MapPopupTemplate {
     }
   }
 
-  private Div<Body<?>> addThumb(final Div<Body<?>> parent) {
-    return locatableWithSummary.getThumb()
+  private void addThumb(final Div<Body<?>> parent) {
+    locatableWithSummary.getThumb()
         .map(i -> parent
             // @formatter:off
             .img()
               .attrClass("float-left pr-1")
               .attrSrc(i)
-            .__())
+            .__());
             // @formatter:on
-        .orElse(parent);
   }
 
-  private Div<Body<?>> addSummary(final Div<Body<?>> parent) {
-    return locatableWithSummary.getThumb()
+  private void addSummary(final Div<Body<?>> parent) {
+    locatableWithSummary.getThumb()
         .map(t -> parent
+            // @formatter:off
             .span()
               .text(t)
-            .__())
-        .orElse(parent);
+            .__());
+            // @formatter:on
   }
 
-  private Div<Body<?>> addLink(final Div<Body<?>> parent) {
-    return parent
+  private void addLink(final Div<Body<?>> parent) {
+    parent
         .br().__()
         .br().__()
         .span()

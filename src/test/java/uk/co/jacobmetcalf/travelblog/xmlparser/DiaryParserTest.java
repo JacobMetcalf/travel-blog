@@ -1,8 +1,10 @@
 package uk.co.jacobmetcalf.travelblog.xmlparser;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import com.google.common.base.Preconditions;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +29,7 @@ public class DiaryParserTest {
   @Test
   public void parse_example_file() throws XMLStreamException, IOException {
     try (InputStream inputStream = this.getClass().getResourceAsStream("diary.xml")) {
+      Preconditions.checkState(inputStream != null, "Resource does not exist");
       long numEntries = unit.parse(inputStream).getEntriesAndRoutes().count();
       assertThat(numEntries, equalTo(23L));
     }

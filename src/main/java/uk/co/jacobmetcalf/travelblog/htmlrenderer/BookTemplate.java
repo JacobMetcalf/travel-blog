@@ -1,7 +1,6 @@
 package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 
 import java.util.List;
-import java.util.Optional;
 import org.xmlet.htmlapifaster.Div;
 import org.xmlet.htmlapifaster.Element;
 import uk.co.jacobmetcalf.travelblog.model.Book;
@@ -28,15 +27,15 @@ public class BookTemplate {
     return !books.isEmpty();
   }
 
-  public <T extends Element<T,?>> Div<T> add(final Div<T> parent) {
-    return parent
+  public <T extends Element<T,?>> void add(final Div<T> parent) {
+    parent
         .span().attrClass("d-none d-md-block").text("Books").__()
         .of(d -> books.forEach(b -> addBook(d, b)));
   }
 
-  private <T extends Element<T,?>> Div<T> addBook(final Div<T> parent, final Book book) {
+  private <T extends Element<T,?>> void addBook(final Div<T> parent, final Book book) {
     String link = AMAZON_BASE + book.getIsin() + associatesTag;
-    return parent
+    parent
         .a().attrTarget("_blank").attrHref(link)
           .img().attrSrc("https://images-na.ssl-images-amazon.com/images/P/"
             + book.getIsin() + ".01.THUMBZZZ.jpg")

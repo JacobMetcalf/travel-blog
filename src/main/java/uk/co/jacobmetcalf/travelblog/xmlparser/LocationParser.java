@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
 import uk.co.jacobmetcalf.travelblog.model.Locatable;
 import uk.co.jacobmetcalf.travelblog.model.Location;
@@ -39,8 +38,7 @@ public class LocationParser implements ElementPullParser<Location> {
    * @throws IllegalStateException If encounters Xml it is not expecting
    */
   @Override
-  public Location pullElement(final XMLEventReader xmlEventReader,
-      @Nullable final Locatable parentLocatable)
+  public Location pullElement(final XMLEventReader xmlEventReader, final Locatable parentLocatable)
       throws XMLStreamException {
 
     Preconditions.checkArgument(xmlEventReader.hasNext());

@@ -17,11 +17,11 @@ public class LocationTemplate {
   /**
    * Adds a location link to a paragraph or span.
    */
-  public <E extends PhrasingContentChoice<E,?>> E add(final E parent,
+  public <E extends PhrasingContentChoice<E,?>> void add(final E parent,
       final Locatable locatable, boolean fullyQualified) {
 
     // @formatter:off
-    E result = parent
+    E modifiedParent = parent
         .a().attrId(locatable.getLocation()).__()
         .a()
           .of(ifNoWikiLinkToMap(locatable))
@@ -30,8 +30,7 @@ public class LocationTemplate {
         .__()
         .script().of(s -> MapTemplate.addLocation(s, locatable, null)).__();
     // @formatter:on
-    ifWikiAddGlobeIcon(result, locatable);
-    return result;
+    ifWikiAddGlobeIcon(modifiedParent, locatable);
   }
 
   private <E extends Element<E,?>> Consumer<A<E>> ifNoWikiLinkToMap(final Locatable locatable) {
@@ -50,12 +49,12 @@ public class LocationTemplate {
     }
   }
 
-  private <T extends Element<T,?>> A<T> centreOnMap(final A<T> parent, final Locatable locatable) {
+  private <T extends Element<T,?>> void centreOnMap(final A<T> parent, final Locatable locatable) {
 
     if (locatable.getLongitude().isEmpty() || locatable.getLatitude().isEmpty()) {
-      return parent;
+      return;
     }
-    return parent.attrOnclick("map.setCenter({lat:" + locatable.getLatitude().get()
+    parent.attrOnclick("map.setCenter({lat:" + locatable.getLatitude().get()
         + ",lng:" + locatable.getLongitude().get()
         + "});map.setZoom(" + locatable.getZoom()
         + ");").attrHref("#");

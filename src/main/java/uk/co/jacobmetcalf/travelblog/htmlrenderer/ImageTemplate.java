@@ -11,9 +11,9 @@ import uk.co.jacobmetcalf.travelblog.model.Image;
  */
 public class ImageTemplate {
 
-  public <T extends Element<T,?>> Div<T> add(final Div<T> parent, final Image image) {
+  public <T extends Element<T,?>> void add(final Div<T> parent, final Image image) {
     // @formatter:off
-    return parent
+    parent
         .figure()
           .of(addAlignmentAttribute(image.getPosition()))
           .a().attrTarget("_blank")
@@ -36,7 +36,7 @@ public class ImageTemplate {
     // @formatter:on
   }
 
-  @SuppressWarnings("UnnecessaryParentheses") //https://github.com/google/error-prone/issues/1647
+  @SuppressWarnings({"UnnecessaryParentheses","RedundantSuppression"}) //https://github.com/google/error-prone/issues/1647
   private <T extends Element<T,?>> Consumer<Figure<Div<T>>> addAlignmentAttribute(final Image.Position position) {
     final String attrClass = switch (position) {
       case LEFT -> "figure float-md-left pr-3 clear-left";

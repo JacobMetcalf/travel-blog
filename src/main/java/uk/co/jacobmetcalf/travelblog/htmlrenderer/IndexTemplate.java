@@ -82,25 +82,25 @@ public class IndexTemplate {
   /**
    * Add the divider in which the map will be drawn.
    */
-  public <T extends Element<T,?>> Div<T> addMapDiv(final Div<T> parent) {
+  public <T extends Element<T,?>> void addMapDiv(final Div<T> parent) {
     // @formatter:off
-    return parent
+    parent
       .div().attrClass("clearfix py-1")
         .div().attrId("map").attrClass("mb-1").__()
       .__();
     // @formatter:on
   }
 
-  public <T extends Element<T,?>> Div<T> addReferences(final Div<T> parent) {
-    return parent.of(p -> references.forEach(r -> addReference(p, r)));
+  public <T extends Element<T,?>> void addReferences(final Div<T> parent) {
+    parent.of(p -> references.forEach(r -> addReference(p, r)));
   }
 
-  public <T extends Element<T,?>> Div<T> addReference(final Div<T> parent,
+  public <T extends Element<T,?>> void addReference(final Div<T> parent,
       final LocatableWithSummary reference) {
     
     // TODO : Algo for link name north, south etc. Write tests
     String popupHtml = new MapPopupTemplate(reference).render();
-    return parent
+    parent
         .script().of(s -> MapTemplate.addLocation(s, reference, popupHtml)).__()
         .a()
           .attrClass("btn btn-outline-primary mr-1")

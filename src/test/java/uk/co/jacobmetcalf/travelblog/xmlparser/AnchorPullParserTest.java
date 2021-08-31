@@ -81,6 +81,7 @@ public class AnchorPullParserTest {
 //        () -> TestHelper.tryParse(inputXml, unit, TestData.QUITO));
 //  }
 
+  @Test
   public void throws_if_element_left_open() {
     String inputXml = "<wiki ref=\"Test\">Open";
     Assertions.assertThrows(IllegalStateException.class,

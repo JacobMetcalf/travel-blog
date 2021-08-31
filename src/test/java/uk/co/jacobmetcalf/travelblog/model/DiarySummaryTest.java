@@ -15,7 +15,7 @@ public class DiarySummaryTest {
             createDiarySummary("Germany", "Bavaria"))
         .build();
 
-    assertThat(result.first().getCountry().get(), Matchers.equalTo("Germany"));
+    assertThat(result.first().getCountry().orElseThrow(), Matchers.equalTo("Germany"));
   }
 
   @Test
@@ -25,7 +25,7 @@ public class DiarySummaryTest {
             createDiarySummary("Germany", "Bavaria"))
         .build();
 
-    assertThat(result.first().getProvince().get(), Matchers.equalTo("Bavaria"));
+    assertThat(result.first().getProvince().orElseThrow(), Matchers.equalTo("Bavaria"));
   }
 
   private DiarySummary createDiarySummary(String country, String province) {

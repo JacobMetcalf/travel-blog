@@ -93,21 +93,21 @@ public class DiaryTemplate {
    * Add the divider in which the map will be drawn. Book element is optional but
    * requires the
    */
-  public <T extends Element<T,?>> Div<T> addMapDiv(final Div<T> parent) {
+  public <T extends Element<T,?>> void addMapDiv(final Div<T> parent) {
     // @formatter:off
     if (bookTemplate.hasBooks()) {
-      return parent
+      parent
           .div().attrClass("clearfix row ml-1 py-1")
             .div().attrId("map").attrClass("col-lg-11 mb-1").__()
             .div().attrId("books").attrClass("col-lg-1")
               .of(bookTemplate::add)
             .__()
           .__();
-      } else {
-        return parent
-          .div().attrClass("clearfix row ml-1 py-1")
-            .div().attrId("map").attrClass("col-lg-11 mb-1").__()
-          .__();
+    } else {
+      parent
+        .div().attrClass("clearfix row ml-1 py-1")
+          .div().attrId("map").attrClass("col-lg-11 mb-1").__()
+        .__();
     }
     // @formatter:on
   }

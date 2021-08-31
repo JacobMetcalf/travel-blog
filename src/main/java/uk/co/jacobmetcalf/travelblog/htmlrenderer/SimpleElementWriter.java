@@ -2,7 +2,6 @@ package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.PrintStream;
-import java.util.Set;
 import org.xmlet.htmlapifaster.Area;
 import org.xmlet.htmlapifaster.Base;
 import org.xmlet.htmlapifaster.Br;

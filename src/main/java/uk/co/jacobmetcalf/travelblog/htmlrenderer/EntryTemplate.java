@@ -18,9 +18,9 @@ public class EntryTemplate {
   private final LocationTemplate locationTemplate = new LocationTemplate();
   private final ParagraphTemplate paragraphTemplate = new ParagraphTemplate();
 
-  public <T extends Element<T,?>> Div<T> add(final Div<T> parent, final Entry entry) {
+  public <T extends Element<T,?>> void add(final Div<T> parent, final Entry entry) {
     // @formatter:off
-    return parent
+    parent
       .div()
         .attrClass("clearfix")
         .div()
