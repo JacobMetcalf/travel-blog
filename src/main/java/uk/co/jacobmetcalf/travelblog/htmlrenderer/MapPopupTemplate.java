@@ -49,7 +49,7 @@ public class MapPopupTemplate {
 
   private void addThumb(final Div<Body<?>> parent) {
     locatableWithSummary.getThumb()
-        .map(i -> parent
+        .ifPresent(i -> parent
             // @formatter:off
             .img()
               .attrClass("float-left pr-1")
@@ -60,7 +60,7 @@ public class MapPopupTemplate {
 
   private void addSummary(final Div<Body<?>> parent) {
     locatableWithSummary.getThumb()
-        .map(t -> parent
+        .ifPresent(t -> parent
             // @formatter:off
             .span()
               .text(t)
