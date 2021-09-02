@@ -10,6 +10,7 @@ import uk.co.jacobmetcalf.travelblog.model.Anchor;
 /**
  * Template which renders the navigation bar of the diary page, with various links.
  */
+@SuppressWarnings("UnusedReturnValue") // We use unused return type to syntactically ensure tags closed
 public class NavbarTemplate {
 
   private final NavigationAnchorTemplate navigationAnchorTemplate;
@@ -25,9 +26,9 @@ public class NavbarTemplate {
     this.navigationAnchorTemplate = new NavigationAnchorTemplate(ImmutableList.of());
   }
 
-  public <T extends Element<T,?>> void add(final Div<T> parent) {
+  public <T extends Element<T,?>> Div<T> add(final Div<T> parent) {
     // @formatter:off
-    parent
+    return parent
         .nav().attrClass("navbar navbar-dark bg-dark my-3")
           .div().attrClass("navbar-text text-light") // light because we do not want muted
             .text(title)
@@ -41,9 +42,9 @@ public class NavbarTemplate {
     // @formatter:on
   }
 
-  private <T extends Element<T,?>> void addHomeLink(final Ul<T> parent) {
+  private <T extends Element<T,?>>  Ul<T> addHomeLink(final Ul<T> parent) {
     // @formatter:off
-    parent
+    return parent
         .li().attrClass("nav-item")
           .a().attrClass("nav-link px-2").attrHref("../index.html")
             .i().attrClass("fa fa-globe").attrTitle("Return to World Map")
@@ -53,9 +54,9 @@ public class NavbarTemplate {
     // @formatter:on
   }
 
-  private <T extends Element<T,?>> void addSlideshowLink(final Ul<T> parent) {
+  private <T extends Element<T,?>> Ul<T> addSlideshowLink(final Ul<T> parent) {
     // @formatter:off
-    parent
+    return parent
       .li().attrClass("nav-item")
         .a().attrClass("nav-link px-2").attrOnclick("$('.figure:first').trigger('click');")
           .i().attrClass("fa fa-clone").attrTitle("View slideshow")

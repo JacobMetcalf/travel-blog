@@ -6,9 +6,9 @@ import com.google.common.collect.ImmutableList;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import uk.co.jacobmetcalf.travelblog.executor.ImmutableProperties;
+import uk.co.jacobmetcalf.travelblog.executor.Properties;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableAnchor;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableProperties;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
 
 public class FooterTemplateTest {
 

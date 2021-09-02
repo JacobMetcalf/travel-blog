@@ -7,10 +7,11 @@ import java.io.PrintStream;
 import java.util.stream.Stream;
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
+import uk.co.jacobmetcalf.travelblog.executor.Properties;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
+import uk.co.jacobmetcalf.travelblog.model.EntriesAndRoutes;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableDiary;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableEntryOrRoute;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
 import uk.co.jacobmetcalf.travelblog.model.TestData;
 
 public class DiaryTemplateTest {
@@ -19,9 +20,9 @@ public class DiaryTemplateTest {
   public void can_render_diary() {
 
     Diary diaryOneEntry = ImmutableDiary.builder().from(TestData.DIARY_NO_ENTRIES)
-        .entriesAndRoutes(Stream.of(
+        .entriesAndRoutes(new EntriesAndRoutes(Stream.of(
             ImmutableEntryOrRoute.builder()
-                .entry(TestData.ENTRY_1).build())).build();
+                .entry(TestData.ENTRY_1).build()))).build();
 
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     SimpleElementWriter writer = new SimpleElementWriter(new PrintStream(out));

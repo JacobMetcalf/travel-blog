@@ -1,5 +1,7 @@
 module uk.co.jacobmetcalf.travelblog {
   opens uk.co.jacobmetcalf.travelblog to jcommander;
+  opens uk.co.jacobmetcalf.travelblog.model to jcommander;
+  opens uk.co.jacobmetcalf.travelblog.executor to jcommander;
   requires java.xml;
   requires com.google.common;
   requires htmlApiFaster;

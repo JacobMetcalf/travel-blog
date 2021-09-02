@@ -24,6 +24,7 @@ public interface Locatable {
 
   Optional<Double> getLongitude();
   Optional<Double> getLatitude();
+
   @SuppressWarnings("SameReturnValue")
   @Value.Default
   default int getZoom() {

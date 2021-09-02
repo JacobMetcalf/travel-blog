@@ -11,17 +11,18 @@ import uk.co.jacobmetcalf.travelblog.model.Locatable;
  * Template for adding the HTMl for a location link to a
  * @see org.xmlet.htmlapifaster.PhrasingContentChoice, typically a span or a p element.
  */
+@SuppressWarnings("UnusedReturnValue") // We use unused return type to syntactically ensure tags closed
 public class LocationTemplate {
   private static final Joiner LOCATION_JOINER = Joiner.on(", ").skipNulls();
 
   /**
    * Adds a location link to a paragraph or span.
    */
-  public <E extends PhrasingContentChoice<E,?>> void add(final E parent,
+  public <E extends PhrasingContentChoice<E,?>> E add(final E parent,
       final Locatable locatable, boolean fullyQualified) {
 
     // @formatter:off
-    E modifiedParent = parent
+    E result = parent
         .a().attrId(locatable.getLocation()).__()
         .a()
           .of(ifNoWikiLinkToMap(locatable))
@@ -30,7 +31,8 @@ public class LocationTemplate {
         .__()
         .script().of(s -> MapTemplate.addLocation(s, locatable, null)).__();
     // @formatter:on
-    ifWikiAddGlobeIcon(modifiedParent, locatable);
+    ifWikiAddGlobeIcon(result, locatable);
+    return result;
   }
 
   private <E extends Element<E,?>> Consumer<A<E>> ifNoWikiLinkToMap(final Locatable locatable) {
@@ -39,22 +41,23 @@ public class LocationTemplate {
             () -> centreOnMap(a, locatable));
   }
 
-  private <E extends PhrasingContentChoice<E,?>> void ifWikiAddGlobeIcon(final E parent, final Locatable locatable) {
-    if (locatable.getWiki().isPresent()) {
-        parent.text("&nbsp;")
-          .a()
-            .of(a -> centreOnMap(a, locatable))
-            .i().attrClass("fa fa-globe").__()
-          .__();
+  private <E extends PhrasingContentChoice<E,?>> E ifWikiAddGlobeIcon(final E parent, final Locatable locatable) {
+    if (locatable.getWiki().isEmpty()) {
+      return parent;
     }
+    return parent.text("&nbsp;")
+      .a()
+        .of(a -> centreOnMap(a, locatable))
+        .i().attrClass("fa fa-globe").__()
+      .__();
   }
 
-  private <T extends Element<T,?>> void centreOnMap(final A<T> parent, final Locatable locatable) {
+  private <T extends Element<T,?>> A<T> centreOnMap(final A<T> parent, final Locatable locatable) {
 
     if (locatable.getLongitude().isEmpty() || locatable.getLatitude().isEmpty()) {
-      return;
+      return parent;
     }
-    parent.attrOnclick("map.setCenter({lat:" + locatable.getLatitude().get()
+    return parent.attrOnclick("map.setCenter({lat:" + locatable.getLatitude().get()
         + ",lng:" + locatable.getLongitude().get()
         + "});map.setZoom(" + locatable.getZoom()
         + ");").attrHref("#");

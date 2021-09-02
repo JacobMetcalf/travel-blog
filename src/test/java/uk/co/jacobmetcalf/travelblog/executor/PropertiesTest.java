@@ -1,4 +1,4 @@
-package uk.co.jacobmetcalf.travelblog.model;
+package uk.co.jacobmetcalf.travelblog.executor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;

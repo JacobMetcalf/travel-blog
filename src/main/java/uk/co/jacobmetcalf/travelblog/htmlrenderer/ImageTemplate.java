@@ -9,11 +9,12 @@ import uk.co.jacobmetcalf.travelblog.model.Image;
 /**
  * Template for rendering an image.
  */
+@SuppressWarnings("UnusedReturnValue") // We use unused return type to syntactically ensure tags closed
 public class ImageTemplate {
 
-  public <T extends Element<T,?>> void add(final Div<T> parent, final Image image) {
+  public <T extends Element<T,?>> Div<T> add(final Div<T> parent, final Image image) {
     // @formatter:off
-    parent
+    return parent
         .figure()
           .of(addAlignmentAttribute(image.getPosition()))
           .a().attrTarget("_blank")

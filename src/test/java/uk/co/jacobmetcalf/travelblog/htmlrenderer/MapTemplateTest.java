@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
 import org.junit.jupiter.api.Test;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
+import uk.co.jacobmetcalf.travelblog.executor.Properties;
 import uk.co.jacobmetcalf.travelblog.model.TestData;
 
 public class MapTemplateTest {

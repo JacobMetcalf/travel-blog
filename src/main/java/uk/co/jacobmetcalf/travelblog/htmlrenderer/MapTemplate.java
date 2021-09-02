@@ -7,14 +7,15 @@ import org.xmlet.htmlapifaster.Div;
 import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.EnumTypeScriptType;
 import org.xmlet.htmlapifaster.Script;
+import uk.co.jacobmetcalf.travelblog.executor.Properties;
 import uk.co.jacobmetcalf.travelblog.model.Locatable;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
 import uk.co.jacobmetcalf.travelblog.model.Route;
 
 /**
  * Template for a google map. A little bit gnarly as creating the map requires
  * a bit of javascript.
  */
+@SuppressWarnings("UnusedReturnValue") // We use unused return type to syntactically ensure tags closed
 public class MapTemplate {
 
   private final Locatable centre;
@@ -46,11 +47,11 @@ public class MapTemplate {
    * Used by the location template to add a location to a javascript
    * dictionary which will be rendered as points on the map.
    */
-  public static <T extends Element<T,?>> void addLocation(
+  public static <T extends Element<T,?>> Script<T> addLocation(
       final Script<T> script, final Locatable locatable, @Nullable String popupHtml) {
 
     if (!locatable.hasCoords() || locatable.getLocation().isEmpty()) {
-      return;
+      return script;
     }
 
     String addLocationEntryJs = "locations[\"" + locatable.getLocation()
@@ -61,15 +62,16 @@ public class MapTemplate {
       addLocationEntryJs += ",popup:`" + popupHtml + "`";
     }
     addLocationEntryJs += "};";
-    script.attrType(EnumTypeScriptType.TEXT_JAVASCRIPT).text(addLocationEntryJs);
+
+    return script.attrType(EnumTypeScriptType.TEXT_JAVASCRIPT).text(addLocationEntryJs);
   }
 
   /**
    * Adds a call back to centre the map, initialise the google api and then
    * call the initMap() function which plots all the routes.
    */
-  public <T extends Element<T,?>> void addFooterScript(final Div<T> parent) {
-    parent
+  public <T extends Element<T,?>> Div<T> addFooterScript(final Div<T> parent) {
+    return parent
         .script().attrType(EnumTypeScriptType.TEXT_JAVASCRIPT).text(
             "centre = {lat:" + centre.getLatitude().orElse(0d)
                 + ",lng:" + centre.getLongitude().orElse(0d) +"}; "

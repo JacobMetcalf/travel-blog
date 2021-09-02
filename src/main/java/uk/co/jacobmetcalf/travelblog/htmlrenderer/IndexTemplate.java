@@ -14,12 +14,15 @@ import org.xmlet.htmlapifaster.EnumRelType;
 import org.xmlet.htmlapifaster.EnumTypeContentType;
 import org.xmlet.htmlapifaster.EnumTypeScriptType;
 import org.xmlet.htmlapifaster.Html;
-import uk.co.jacobmetcalf.travelblog.model.DiarySummary;
+import uk.co.jacobmetcalf.travelblog.executor.Properties;
+import uk.co.jacobmetcalf.travelblog.model.IndexEntry;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableLocation;
-import uk.co.jacobmetcalf.travelblog.model.LocatableWithSummary;
 import uk.co.jacobmetcalf.travelblog.model.Location;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
 
+/**
+ * Template for rendering the index page.
+ */
+@SuppressWarnings("UnusedReturnValue") // We use unused return type to syntactically ensure tags closed
 public class IndexTemplate {
 
   private static final String TITLE = "Anna and Jacob Metcalf's Travels";
@@ -30,15 +33,17 @@ public class IndexTemplate {
           @media (min-width : 768px) { #map { height: 300px; }}
           @media (min-width : 992px) { #map { height: 400px; }}""";
 
-  private final Set<DiarySummary> references;
+  private final Set<IndexEntry> references;
   private final Properties properties;
   private final NavbarTemplate headerTemplate;
   private final MapTemplate mapTemplate;
   private final ElementVisitor elementVisitor;
 
-  public IndexTemplate(final Set<DiarySummary> references,
+  public IndexTemplate(final Set<IndexEntry> references,
       final Properties properties,
       final ElementVisitor elementVisitor) {
+
+    // TODO : Algo for North, South etc. Fix header. Populate Date
     this.references = references;
     this.properties = properties;
     Location centre = ImmutableLocation.builder().location("World").latitude(30).longitude(15).zoom(2).build();
@@ -72,7 +77,7 @@ public class IndexTemplate {
           .div().attrId("content").attrClass("container")
             .of(headerTemplate::add)
             .of(this::addMapDiv)
-            .of(this::addReferences)
+            .of(this::addEntry)
             .of(mapTemplate::addFooterScript)
         .__()
       .__();
@@ -91,22 +96,23 @@ public class IndexTemplate {
     // @formatter:on
   }
 
-  public <T extends Element<T,?>> void addReferences(final Div<T> parent) {
-    parent.of(p -> references.forEach(r -> addReference(p, r)));
+  public <T extends Element<T,?>> Div<T> addEntry(final Div<T> parent) {
+    return parent.of(p -> references.forEach(r -> addEntry(p, r)));
   }
 
-  public <T extends Element<T,?>> void addReference(final Div<T> parent,
-      final LocatableWithSummary reference) {
+  public <T extends Element<T,?>> Div<T> addEntry(final Div<T> parent,
+      final IndexEntry entry) {
     
-    // TODO : Algo for link name north, south etc. Write tests
-    String popupHtml = new MapPopupTemplate(reference).render();
-    parent
-        .script().of(s -> MapTemplate.addLocation(s, reference, popupHtml)).__()
+    String popupHtml = new MapPopupTemplate(entry).render();
+    return parent
+        // @formatter:off
+        .script().of(s -> MapTemplate.addLocation(s, entry, popupHtml)).__()
         .a()
           .attrClass("btn btn-outline-primary mr-1")
           .addAttr("role", "button")
-          .attrHref(reference.getCanonicalUrl())
-          .text(reference.getCountry().orElseThrow())
+          .attrHref(entry.getRelativeUrl())
+          .text(entry.getCountry().orElseThrow())
         .__();
+        // @formatter:on
   }
 }

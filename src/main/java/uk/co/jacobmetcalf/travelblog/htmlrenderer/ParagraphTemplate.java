@@ -6,6 +6,10 @@ import org.xmlet.htmlapifaster.Element;
 import org.xmlet.htmlapifaster.P;
 import uk.co.jacobmetcalf.travelblog.model.Paragraph;
 
+/**
+ * Template which adds a paragraph to a div.
+ */
+@SuppressWarnings("UnusedReturnValue") // We use unused return type to syntactically ensure tags closed
 public class ParagraphTemplate {
 
   private final ImageTemplate imageTemplate = new ImageTemplate();
@@ -16,14 +20,14 @@ public class ParagraphTemplate {
    * @param paragraph The contents of the paragraph.
    * @param <Z> Parent element of the div.
    */
-  public <Z extends Element<Z,?>> void add(final Div<Z> parent, final Paragraph paragraph) {
+  public <Z extends Element<Z,?>> Div<Z> add(final Div<Z> parent, final Paragraph paragraph) {
 
     Consumer<P<Div<Z>>> consumer = p -> {
         ParagraphPartVisitor<Div<Z>> visitor = new ParagraphPartVisitor<>(p);
         paragraph.getParts().forEach(i -> i.visit(visitor));
       };
 
-      parent.of(addImages(paragraph))
+      return parent.of(addImages(paragraph))
         // Now the remaining text elements
         .p().of(consumer).__();
     }

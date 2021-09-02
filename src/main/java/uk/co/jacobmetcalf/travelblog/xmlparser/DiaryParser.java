@@ -9,11 +9,13 @@ import java.util.stream.StreamSupport;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
+import uk.co.jacobmetcalf.travelblog.executor.Paths;
+import uk.co.jacobmetcalf.travelblog.executor.Properties;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
+import uk.co.jacobmetcalf.travelblog.model.EntriesAndRoutes;
 import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
 import uk.co.jacobmetcalf.travelblog.model.ImmutableDiary;
 import uk.co.jacobmetcalf.travelblog.model.Locatable;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
 
 /**
  * Pull parses an XML document into an ordered stream of Entry objects.
@@ -25,23 +27,23 @@ public class DiaryParser {
 
   private XMLEventReader xmlEventReader;
   private Locatable rootLocatable;
-  private final String canonicalUrlOfDiary;
+  private final Paths paths;
   private final AnchorPullParser navigationParser;
   private final BookPullParser bookParser = new BookPullParser();
   private final StringPullParser stringPullParser = new StringPullParser();
 
   private final AttributeParser<ImmutableDiary.Builder> attributeParser;
 
-  public DiaryParser(final Properties properties, final String canonicalUrl,
-      final String canonicalUrlOfImages) {
+  public DiaryParser(final Properties properties, final Paths paths) {
     this.navigationParser = new AnchorPullParser(ElementToken.NAVIGATION,
         properties.get(Properties.Key.CANONICAL_URL).orElseThrow());
-    this.canonicalUrlOfDiary = canonicalUrl;
+    this.paths = paths;
     this.attributeParser =
       new LocationParser().addLocationAttributes(AttributeParser.<ImmutableDiary.Builder>builder()
           .withElementToken(ElementToken.DIARY)
           .put(AttributeToken.TITLE, (b, a) -> b.title(a.getValue()))
-          .put(AttributeToken.THUMB, (b, a) -> b.thumb(canonicalUrlOfImages + "/" + a.getValue())))
+          .put(AttributeToken.THUMB,
+              (b, a) -> b.thumb(a.getValue())))
           .build();
   }
 
@@ -49,7 +51,7 @@ public class DiaryParser {
 
     ImmutableDiary.Builder diaryBuilder = ImmutableDiary.builder();
     Preconditions.checkNotNull(inputStream, "Input stream cannot be null");
-    diaryBuilder.canonicalUrl(canonicalUrlOfDiary);
+    diaryBuilder.canonicalUrl(paths.getCanonicalUrl());
 
     try {
       xmlEventReader = FilteredReaderFactory.create(inputStream);
@@ -72,10 +74,12 @@ public class DiaryParser {
       diaryBuilder.addAllNavigationAnchors(navigationParser.pullElements(xmlEventReader));
       diaryBuilder.addAllBooks(bookParser.pullElements(xmlEventReader));
 
-      EventIterator iterator = new EventIterator();
-      diaryBuilder.entriesAndRoutes(StreamSupport.stream(Spliterators.spliteratorUnknownSize(
-          iterator, Spliterator.ORDERED | Spliterator.IMMUTABLE | Spliterator.NONNULL),
-          false));
+      // Return a wrapped stream of entries and routes
+      PullEventIterator iterator = new PullEventIterator();
+      diaryBuilder.entriesAndRoutes(new EntriesAndRoutes(
+          StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator,
+                  Spliterator.ORDERED | Spliterator.IMMUTABLE | Spliterator.NONNULL),
+          false)));
 
       Diary result = diaryBuilder.build();
       // Iterator will refer to the root location
@@ -109,7 +113,7 @@ public class DiaryParser {
     /**
    * Iterator over the XML stream
    */
-  private class EventIterator implements Iterator<EntryOrRoute> {
+  private class PullEventIterator implements Iterator<EntryOrRoute> {
 
     private EntryOrRoute nextEntry;
 

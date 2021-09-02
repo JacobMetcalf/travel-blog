@@ -18,13 +18,16 @@ import org.xmlet.htmlapifaster.EnumRelType;
 import org.xmlet.htmlapifaster.EnumTypeContentType;
 import org.xmlet.htmlapifaster.EnumTypeScriptType;
 import org.xmlet.htmlapifaster.Html;
+import uk.co.jacobmetcalf.travelblog.executor.Properties;
 import uk.co.jacobmetcalf.travelblog.model.Diary;
 import uk.co.jacobmetcalf.travelblog.model.Entry;
 import uk.co.jacobmetcalf.travelblog.model.EntryOrRoute;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
 import uk.co.jacobmetcalf.travelblog.model.Route;
 
-
+/**
+ * Template which outputs the head and body.
+ */
+@SuppressWarnings("UnusedReturnValue") // We use unused return type to syntactically ensure tags closed
 public class DiaryTemplate {
 
   private static final String ADDITIONAL_STYLES =
@@ -80,7 +83,7 @@ public class DiaryTemplate {
           .div().attrId("content").attrClass("container")
             .of(headerTemplate::add)
             .of(this::addMapDiv)
-            .of(addEntriesAndRoutes(diary.getEntriesAndRoutes()))
+            .of(addEntriesAndRoutes(diary.getEntriesAndRoutes().stream()))
             .of(mapTemplate::addFooterScript)
           .__()
           .of(footerTemplate::add)
@@ -90,13 +93,12 @@ public class DiaryTemplate {
   }
 
   /**
-   * Add the divider in which the map will be drawn. Book element is optional but
-   * requires the
+   * Add the divider in which the map will be drawn. Book element is optional.
    */
-  public <T extends Element<T,?>> void addMapDiv(final Div<T> parent) {
+  public <T extends Element<T,?>> Div<T> addMapDiv(final Div<T> parent) {
     // @formatter:off
     if (bookTemplate.hasBooks()) {
-      parent
+      return parent
           .div().attrClass("clearfix row ml-1 py-1")
             .div().attrId("map").attrClass("col-lg-11 mb-1").__()
             .div().attrId("books").attrClass("col-lg-1")
@@ -104,7 +106,7 @@ public class DiaryTemplate {
             .__()
           .__();
     } else {
-      parent
+      return parent
         .div().attrClass("clearfix row ml-1 py-1")
           .div().attrId("map").attrClass("col-lg-11 mb-1").__()
         .__();

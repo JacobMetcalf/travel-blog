@@ -3,20 +3,26 @@ package uk.co.jacobmetcalf.travelblog.htmlrenderer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.time.format.DateTimeFormatter;
+import org.xmlet.htmlapifaster.B;
 import org.xmlet.htmlapifaster.Body;
 import org.xmlet.htmlapifaster.Div;
-import uk.co.jacobmetcalf.travelblog.model.LocatableWithSummary;
+import uk.co.jacobmetcalf.travelblog.model.IndexEntry;
 
 /**
- * Renders a small popup on the map.
+ * Templates which renders a small popup on the map.
  * This can include a thumbnail image, a description and a link.
  */
+@SuppressWarnings("UnusedReturnValue") // We use unused return type to syntactically ensure tags closed
 public class MapPopupTemplate {
 
-  private final LocatableWithSummary locatableWithSummary;
+  private final static DateTimeFormatter DATE_FORMAT =
+      DateTimeFormatter.ofPattern("MMMM yyyy");
 
-  public MapPopupTemplate(final LocatableWithSummary locatableWithSummary) {
-    this.locatableWithSummary = locatableWithSummary;
+  private final IndexEntry indexEntry;
+
+  public MapPopupTemplate(final IndexEntry indexEntry) {
+    this.indexEntry = indexEntry;
   }
 
   /**
@@ -32,8 +38,10 @@ public class MapPopupTemplate {
       new Div<Body<?>>(writer)
         .attrStyle("width:250px;height:150px")
         .of(this::addThumb)
-          // TODO: Add date
-        .b().text(locatableWithSummary.getTitle()).__()
+        .b()
+          .of(this::addDate)
+          .text(indexEntry.getTitle())
+        .__()
         .br().__()
         .of(this::addSummary)
           .br().__()
@@ -47,35 +55,42 @@ public class MapPopupTemplate {
     }
   }
 
-  private void addThumb(final Div<Body<?>> parent) {
-    locatableWithSummary.getThumb()
-        .ifPresent(i -> parent
+  private Div<Body<?>> addThumb(final Div<Body<?>> parent) {
+    return indexEntry.getRelativeThumbUrl()
+        .map(i -> parent
             // @formatter:off
             .img()
               .attrClass("float-left pr-1")
               .attrSrc(i)
-            .__());
+            .__())
             // @formatter:on
+        .orElse(parent);
   }
 
-  private void addSummary(final Div<Body<?>> parent) {
-    locatableWithSummary.getThumb()
-        .ifPresent(t -> parent
+  private Div<Body<?>> addSummary(final Div<Body<?>> parent) {
+    return indexEntry.getSummary()
+        .map(t -> parent
             // @formatter:off
             .span()
               .text(t)
-            .__());
+            .__())
             // @formatter:on
+        .orElse(parent);
   }
 
-  private void addLink(final Div<Body<?>> parent) {
-    parent
+  private B<Div<Body<?>>> addDate(final B<Div<Body<?>>> parent) {
+    return indexEntry.getDate()
+        .map(d -> parent.text(DATE_FORMAT.format(d) + ": ")).orElse(parent);
+  }
+
+  private Div<Body<?>> addLink(final Div<Body<?>> parent) {
+    return parent
         .br().__()
         .br().__()
         .span()
           .a()
             .attrClass("float-right")
-            .attrHref(locatableWithSummary.getCanonicalUrl())
+            .attrHref(indexEntry.getRelativeUrl())
             .b()
               .text("view &gt;&gt;")
             .__()

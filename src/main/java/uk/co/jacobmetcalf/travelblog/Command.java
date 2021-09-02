@@ -1,18 +1,18 @@
 package uk.co.jacobmetcalf.travelblog;
 
 import com.beust.jcommander.Parameter;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableProperties;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
-
+import uk.co.jacobmetcalf.travelblog.executor.Executor;
+import uk.co.jacobmetcalf.travelblog.executor.ImmutableProperties;
+import uk.co.jacobmetcalf.travelblog.executor.Properties;
 
 /**
- * Target for JCommander, places command line arguments in a {@link uk.co.jacobmetcalf.travelblog.model.Properties}
- * then calls the {@link DirectoryProcessor}.
+ * Target for JCommander, places command line arguments in a {@link Properties}
+ * then calls the {@link Executor}.
  */
-public class Executor {
+public class Command {
 
   private final ImmutableProperties.Builder properties = ImmutableProperties.builder();
-  private final DirectoryProcessor processor = new DirectoryProcessor();
+  private final Executor executor = new Executor();
 
   private String directory = null;
   private boolean recursive = false;
@@ -80,6 +80,6 @@ public class Executor {
     }
 
   public void execute() {
-    processor.process(directory, recursive, createIndex, properties.build());
+    executor.process(directory, recursive, createIndex, properties.build());
   }
 }

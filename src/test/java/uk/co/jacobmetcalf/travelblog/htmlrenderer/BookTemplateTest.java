@@ -7,8 +7,8 @@ import static uk.co.jacobmetcalf.travelblog.model.TestData.BOOK_1;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
-import uk.co.jacobmetcalf.travelblog.model.ImmutableProperties;
-import uk.co.jacobmetcalf.travelblog.model.Properties;
+import uk.co.jacobmetcalf.travelblog.executor.ImmutableProperties;
+import uk.co.jacobmetcalf.travelblog.executor.Properties;
 
 public class BookTemplateTest {
 

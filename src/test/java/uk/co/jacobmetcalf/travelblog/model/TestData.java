@@ -71,7 +71,7 @@ public final class TestData {
       .title("Test title")
       .thumb("test.gif")
       .canonicalUrl("https://www.test.com/file.html")
-      .entriesAndRoutes(Stream.empty())
+      .entriesAndRoutes(new EntriesAndRoutes(Stream.empty()))
       .build();
 
   public static final Diary DIARY_WITH_NAVIGATION = ImmutableDiary.builder()
@@ -82,7 +82,7 @@ public final class TestData {
       .addNavigationAnchors(
           ImmutableAnchor.builder().icon("backward").text("Prev").ref("https://forwards.com").build(),
           ImmutableAnchor.builder().icon("forward").text("Next").ref("https://backwards.com").build())
-      .entriesAndRoutes(Stream.empty())
+      .entriesAndRoutes(new EntriesAndRoutes(Stream.empty()))
       .build();
 
   public static final Book BOOK_1 = ImmutableBook.builder()

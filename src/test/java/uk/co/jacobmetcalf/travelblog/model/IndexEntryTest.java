@@ -6,11 +6,11 @@ import com.google.common.collect.ImmutableSortedSet;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-public class DiarySummaryTest {
+public class IndexEntryTest {
 
   @Test
   public void natural_set_orders_by_country() {
-    ImmutableSortedSet<DiarySummary> result = ImmutableSortedSet.<DiarySummary>naturalOrder()
+    ImmutableSortedSet<IndexEntry> result = ImmutableSortedSet.<IndexEntry>naturalOrder()
         .add(createDiarySummary("Greece", "Athens"),
             createDiarySummary("Germany", "Bavaria"))
         .build();
@@ -20,7 +20,7 @@ public class DiarySummaryTest {
 
   @Test
   public void natural_set_orders_by_province() {
-    ImmutableSortedSet<DiarySummary> result = ImmutableSortedSet.<DiarySummary>naturalOrder()
+    ImmutableSortedSet<IndexEntry> result = ImmutableSortedSet.<IndexEntry>naturalOrder()
         .add(createDiarySummary("Germany", "Thuringia"),
             createDiarySummary("Germany", "Bavaria"))
         .build();
@@ -28,8 +28,9 @@ public class DiarySummaryTest {
     assertThat(result.first().getProvince().orElseThrow(), Matchers.equalTo("Bavaria"));
   }
 
-  private DiarySummary createDiarySummary(String country, String province) {
-    return ImmutableDiarySummary.builder().country(country).province(province)
-        .canonicalUrl("https://www.test.com/file.html").title("Test").thumb("test").build();
+  private IndexEntry createDiarySummary(String country, String province) {
+    return ImmutableIndexEntry.builder().country(country).province(province)
+        .relativeUrl("germany/diary.html").title("Test")
+        .relativeThumbUrl("germany/images/test.jpg").build();
   }
 }
