@@ -1,5 +1,6 @@
 package uk.co.jacobmetcalf.travelblog.executor;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedSet;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +9,8 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import org.slf4j.Logger;
@@ -28,7 +31,7 @@ public class Executor {
   private static final String DOCTYPE_HTML = "<!DOCTYPE html>";
 
   private static final Logger logger = LoggerFactory.getLogger(Executor.class.getName());
-  private final ImmutableSortedSet.Builder<IndexEntry> references = ImmutableSortedSet.naturalOrder();
+  private final Map<String, IndexEntry> references = new HashMap<>();
 
   /**
    * Scans a directory reading XML files and then creating an HTML file.
@@ -73,13 +76,19 @@ public class Executor {
 
       Diary diary = parse(properties, paths, inputStream);
 
-      // Now
+      // Check for uniqueness
+      Preconditions.checkArgument(!references.containsKey(diary.getLocation()),
+          "Location: %s, not unique. Add a 'location' attribute with extra info.",
+          diary.getLocation());
+
+      // Now render the diary pages html
       printStream.println(DOCTYPE_HTML);
       SimpleElementWriter writer = new SimpleElementWriter(printStream);
       new DiaryTemplate(diary, properties, writer).render();
 
-      // keep track of diary entries
-      references.add(ImmutableIndexEntry.builder().from(diary)
+      // Keep track of diary entries for index
+      references.put(diary.getLocation(),
+          ImmutableIndexEntry.builder().from(diary)
           .date(diary.getEntriesAndRoutes().getStartDate())
           .title(diary.getTitle())
           .summary(diary.getSummary())
@@ -114,7 +123,8 @@ public class Executor {
     try (OutputStream outputStream = Files.newOutputStream(outputPath);
         PrintStream printStream = new PrintStream(outputStream)) {
       SimpleElementWriter writer = new SimpleElementWriter(printStream);
-      new IndexTemplate(references.build(), properties, writer).render();
+      new IndexTemplate(ImmutableSortedSet.copyOf(references.values()),
+          properties, writer).render();
 
     } catch (IOException ex) {
       throw new RuntimeException("Could not create file:" + outputPath, ex);

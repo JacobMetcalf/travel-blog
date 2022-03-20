@@ -43,7 +43,7 @@ public class IndexTemplate {
       final Properties properties,
       final ElementVisitor elementVisitor) {
 
-    // TODO : Algo for North, South etc. Fix header. Populate Date
+    // TODO: Fix header.
     this.references = references;
     this.properties = properties;
     Location centre = ImmutableLocation.builder().location("World").latitude(30).longitude(15).zoom(2).build();
@@ -71,7 +71,7 @@ public class IndexTemplate {
           .link().attrRel(EnumRelType.STYLESHEET).attrHref(ICON_FONT_CSS).__()
           .style().attrType(EnumTypeContentType.TEXT_CSS).text(ADDITIONAL_STYLES).__()
           .script().attrType(EnumTypeScriptType.TEXT_JAVASCRIPT).attrSrc(JQUERY_JS).__()
-          .script().attrType(EnumTypeScriptType.TEXT_JAVASCRIPT).attrSrc("../diary_functions.js").__()
+          .script().attrType(EnumTypeScriptType.TEXT_JAVASCRIPT).attrSrc("diary_functions.js").__()
         .__() //head
         .body()
           .div().attrId("content").attrClass("container")
@@ -108,10 +108,10 @@ public class IndexTemplate {
         // @formatter:off
         .script().of(s -> MapTemplate.addLocation(s, entry, popupHtml)).__()
         .a()
-          .attrClass("btn btn-outline-primary mr-1")
+          .attrClass("btn btn-outline-primary mr-1 mb-1")
           .addAttr("role", "button")
           .attrHref(entry.getRelativeUrl())
-          .text(entry.getCountry().orElseThrow())
+          .text(entry.getLocation())
         .__();
         // @formatter:on
   }
